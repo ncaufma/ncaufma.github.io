@@ -1,0 +1,44 @@
+name: Deploy NCA Website
+
+on:
+  push:
+    branches: ["main"] # Roda sempre que você der push na main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          # Indica onde está o package-lock.json
+          cache-dependency-path: nca-website/package-lock.json
+
+      - name: Install and Build
+        run: |
+          cd nca-website
+          npm install
+          npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Pasta que o seu "npm run build" gera (geralmente 'dist' ou 'build')
+          path: nca-website/dist 
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
