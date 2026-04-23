@@ -1,0 +1,14 @@
+---
+interface Props {
+  thickness?: 'thin' | 'default' | 'thick';
+  class?: string;
+}
+const { thickness = 'default', class: className = '' } = Astro.props;
+const thicknessClass = thickness === 'thin' ? 'color-bar--thin' : thickness === 'thick' ? 'color-bar--thick' : '';
+---
+<div class:list={['color-bar', thicknessClass, className]} aria-hidden="true">
+  <span class="seg seg-1"></span>
+  <span class="seg seg-2"></span>
+  <span class="seg seg-3"></span>
+  <span class="seg seg-4"></span>
+</div>

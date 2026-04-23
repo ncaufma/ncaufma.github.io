@@ -1,0 +1,5 @@
+# Bloquear arquivos de ícones do sistema
+Icon?
+.DS_Store
+Thumbs.db
+

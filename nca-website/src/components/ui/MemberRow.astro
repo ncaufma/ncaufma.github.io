@@ -1,0 +1,252 @@
+---
+interface Props {
+  name: string;
+  title?: string;
+  photo?: string;
+  slug: string;
+  email?: string;
+  orcid?: string;
+  researcherId?: string;
+  instagram?: string;
+  linkedin?: string;
+  googleScholar?: string;
+  highlights?: string[];
+  index?: number;
+}
+
+const {
+  name,
+  title,
+  photo,
+  slug,
+  email,
+  orcid,
+  researcherId,
+  instagram,
+  linkedin,
+  googleScholar,
+  highlights = [],
+  index = 0,
+} = Astro.props;
+
+const clean = (v?: string) => (v && !v.startsWith('[REQUIRED')) ? v : '';
+
+const eEmail    = clean(email);
+const eOrcid    = clean(orcid);
+const eResId    = clean(researcherId);
+const eInsta    = clean(instagram);
+const eLinkedIn = clean(linkedin);
+const eScholar  = clean(googleScholar);
+const eTitle    = clean(title);
+const ePhoto    = clean(photo);
+
+const orcidUrl = eOrcid ? (eOrcid.startsWith('http') ? eOrcid : `https://orcid.org/${eOrcid}`) : '';
+const instaUrl = eInsta ? (eInsta.startsWith('http') ? eInsta : `https://instagram.com/${eInsta.replace(/^@/, '')}`) : '';
+const resIdUrl = eResId ? (eResId.startsWith('http') ? eResId : `https://www.webofscience.com/wos/author/record/${eResId}`) : '';
+
+const validHighlights = highlights.filter(h => h && !h.startsWith('[REQUIRED'));
+const initials = name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('');
+---
+<article class="member-row reveal" style={`animation-delay: ${index * 0.05}s`}>
+  <a href={`/team/${slug}`} class="member-photo-link" aria-label={`Profile of ${name}`}>
+    {ePhoto ? (
+      <img src={`/assets/team/${ePhoto}`} alt={`Photo of ${name}`} class="member-photo" loading="lazy" width="140" height="140" />
+    ) : (
+      <div class="member-initials" aria-label={`Initials of ${name}`}>{initials}</div>
+    )}
+  </a>
+
+  <div class="member-body">
+    <h3 class="member-name">
+      <a href={`/team/${slug}`}>{name}</a>
+    </h3>
+
+    {eTitle && <p class="member-title">{eTitle}</p>}
+
+    {eEmail && (
+      <p class="member-email">
+        email: <a href={`mailto:${eEmail}`}>{eEmail}</a>
+      </p>
+    )}
+
+    <div class="member-icons" aria-label={`Profiles of ${name}`}>
+      {eInsta && (
+        <a href={instaUrl} target="_blank" rel="noopener noreferrer" class="icon-btn" title="Instagram" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+          </svg>
+        </a>
+      )}
+      {eLinkedIn && (
+        <a href={eLinkedIn} target="_blank" rel="noopener noreferrer" class="icon-btn" title="LinkedIn" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.11 1 2.5 1 4.98 2.12 4.98 3.5zM.22 8h4.56v13H.22V8zm7.05 0h4.37v1.78h.06c.61-1.15 2.1-2.36 4.33-2.36 4.63 0 5.49 3.05 5.49 7.01V21H17v-5.84c0-1.39-.03-3.18-1.94-3.18-1.94 0-2.24 1.51-2.24 3.08V21H7.27V8z" />
+          </svg>
+        </a>
+      )}
+      {orcidUrl && (
+        <a href={orcidUrl} target="_blank" rel="noopener noreferrer" class="icon-btn" title="ORCID" aria-label="ORCID">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <circle cx="12" cy="12" r="10" fill="#A6CE39" />
+            <path fill="#fff" d="M7.75 8.5h1.5v8h-1.5zM8.5 6.25a.9.9 0 11-.002 1.8.9.9 0 01.002-1.8zM10.9 8.5h3.3c2.4 0 4.1 1.6 4.1 4s-1.7 4-4.1 4h-3.3v-8zm1.5 6.6h1.7c1.5 0 2.6-.9 2.6-2.6s-1-2.6-2.6-2.6h-1.7v5.2z" />
+          </svg>
+        </a>
+      )}
+      {resIdUrl && (
+        <a href={resIdUrl} target="_blank" rel="noopener noreferrer" class="icon-btn" title="ResearcherID" aria-label="ResearcherID">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <rect x="3" y="3" width="18" height="18" rx="2" fill="#C8922A" />
+            <text x="12" y="16" font-size="10" font-weight="800" text-anchor="middle" fill="#fff" font-family="sans-serif">R</text>
+          </svg>
+        </a>
+      )}
+      {eScholar && (
+        <a href={eScholar} target="_blank" rel="noopener noreferrer" class="icon-btn" title="Google Scholar" aria-label="Google Scholar">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z" />
+          </svg>
+        </a>
+      )}
+    </div>
+
+    {validHighlights.length > 0 && (
+      <ul class="member-highlights">
+        {validHighlights.map(h => (
+          <li set:html={h}></li>
+        ))}
+      </ul>
+    )}
+  </div>
+</article>
+
+<style>
+.member-row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-5);
+  padding: var(--space-2) 0;
+  align-items: flex-start;
+}
+
+.member-photo-link {
+  display: block;
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg-alt);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.member-photo-link:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.member-photo {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.member-initials {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.member-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+  padding-top: var(--space-1);
+}
+
+.member-name {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+}
+.member-name a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+.member-name a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+.member-title {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.member-email {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  font-style: italic;
+  margin: 0;
+  line-height: 1.4;
+}
+.member-email a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.member-email a:hover { text-decoration: underline; }
+
+.member-icons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: var(--space-1);
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  transition: all var(--transition-fast);
+}
+.icon-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(35,70,229,0.06);
+}
+
+.member-highlights {
+  list-style: disc;
+  margin: var(--space-2) 0 0;
+  padding-left: 1.25rem;
+  color: var(--color-text);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+.member-highlights li { margin-bottom: 0.25rem; }
+.member-highlights li :global(a) {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.member-highlights li :global(a):hover { text-decoration: underline; }
+
+@media (max-width: 540px) {
+  .member-row { grid-template-columns: 96px 1fr; gap: var(--space-4); }
+  .member-photo-link { width: 96px; height: 96px; }
+  .member-name { font-size: 1.125rem; }
+}
+</style>

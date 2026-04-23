@@ -1,0 +1,258 @@
+---
+interface Props {
+  name: string;
+  title?: string;
+  role: string;
+  photo?: string;
+  email?: string;
+  researchLines?: string[];
+  orcid?: string;
+  googleScholar?: string;
+  linkedin?: string;
+  instagram?: string;
+  twitter?: string;
+  slug: string;
+  index?: number;
+}
+const {
+  name,
+  title,
+  role,
+  photo,
+  email,
+  researchLines = [],
+  orcid,
+  googleScholar,
+  linkedin,
+  instagram,
+  twitter,
+  slug,
+  index = 0,
+} = Astro.props;
+
+const initials = name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join('');
+
+const placeholder = (val?: string) => !val || val.startsWith('[REQUIRED');
+
+const orcidUrl     = !placeholder(orcid) ? `https://orcid.org/${orcid}` : null;
+const scholarUrl   = !placeholder(googleScholar) ? googleScholar : null;
+const linkedinUrl  = !placeholder(linkedin) ? linkedin : null;
+const instagramUrl = !placeholder(instagram)
+  ? (instagram!.startsWith('http') ? instagram : `https://instagram.com/${instagram!.replace(/^@/, '')}`)
+  : null;
+const twitterUrl   = !placeholder(twitter)
+  ? (twitter!.startsWith('http') ? twitter : `https://twitter.com/${twitter!.replace(/^@/, '')}`)
+  : null;
+
+const hasAnySocial = orcidUrl || scholarUrl || linkedinUrl || instagramUrl || twitterUrl;
+---
+<div class="team-card reveal" style={`animation-delay: ${index * 0.07}s`}>
+  <a href={`/team/${slug}`} class="team-card-main">
+    <div class="team-photo-wrap">
+      {photo && !photo.startsWith('[REQUIRED') ? (
+        <img src={`/assets/team/${photo}`} alt={`Photo of ${name}`} class="team-photo" loading="lazy" width="120" height="120" />
+      ) : (
+        <div class="team-initials" aria-label={`Initials of ${name}`}>{initials}</div>
+      )}
+    </div>
+
+    <div class="team-info">
+      <span class="team-role">{role}</span>
+      <h3 class="team-name">{name}</h3>
+      {title && !title.startsWith('[REQUIRED') && <p class="team-title">{title}</p>}
+
+      {researchLines.length > 0 && !researchLines[0].startsWith('[REQUIRED') && (
+        <div class="team-lines">
+          {researchLines.slice(0, 2).map(line => (
+            <span class="team-line-tag">{line}</span>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {email && !email.startsWith('[REQUIRED') && (
+      <span class="team-email">{email}</span>
+    )}
+  </a>
+
+  {hasAnySocial && (
+    <div class="team-socials" aria-label={`${name} social links`}>
+      {orcidUrl && (
+        <a href={orcidUrl} target="_blank" rel="noopener noreferrer" class="team-social orcid" title="ORCID" aria-label={`${name} on ORCID`}>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="12" fill="#A6CE39"/>
+            <path fill="#fff" d="M7.37 7.59h1.23v8.81H7.37zM8 5.68a.76.76 0 1 1-.76.76.76.76 0 0 1 .76-.76zM10.24 7.59h3.43c3.27 0 4.71 2.34 4.71 4.41 0 2.24-1.75 4.41-4.7 4.41h-3.44zm1.23 7.7h2.07c2.95 0 3.63-2.24 3.63-3.29 0-1.71-1.09-3.29-3.7-3.29h-2z"/>
+          </svg>
+        </a>
+      )}
+      {scholarUrl && (
+        <a href={scholarUrl} target="_blank" rel="noopener noreferrer" class="team-social scholar" title="Google Scholar" aria-label={`${name} on Google Scholar`}>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
+            <path d="M12 2L1 9l4 2.9v4.4c1.6 2.4 4 4 7 4s5.4-1.6 7-4v-4.4l2-1.5V15h2V9z"/>
+          </svg>
+        </a>
+      )}
+      {linkedinUrl && (
+        <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" class="team-social linkedin" title="LinkedIn" aria-label={`${name} on LinkedIn`}>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
+            <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM3.56 20.45h3.56V9H3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z"/>
+          </svg>
+        </a>
+      )}
+      {instagramUrl && (
+        <a href={instagramUrl} target="_blank" rel="noopener noreferrer" class="team-social instagram" title="Instagram" aria-label={`${name} on Instagram`}>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
+            <path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zm0 2.16c-3.14 0-3.5.01-4.74.07-1.07.05-1.65.23-2.04.38-.51.2-.88.44-1.26.82-.38.38-.62.75-.82 1.26-.15.39-.33.97-.38 2.04-.06 1.24-.07 1.6-.07 4.74s.01 3.5.07 4.74c.05 1.07.23 1.65.38 2.04.2.51.44.88.82 1.26.38.38.75.62 1.26.82.39.15.97.33 2.04.38 1.24.06 1.6.07 4.74.07s3.5-.01 4.74-.07c1.07-.05 1.65-.23 2.04-.38.51-.2.88-.44 1.26-.82.38-.38.62-.75.82-1.26.15-.39.33-.97.38-2.04.06-1.24.07-1.6.07-4.74s-.01-3.5-.07-4.74c-.05-1.07-.23-1.65-.38-2.04a3.39 3.39 0 0 0-.82-1.26 3.39 3.39 0 0 0-1.26-.82c-.39-.15-.97-.33-2.04-.38C15.5 4.33 15.14 4.32 12 4.32zm0 3.68a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0 6.6a2.6 2.6 0 1 0 0-5.2 2.6 2.6 0 0 0 0 5.2zm5.1-6.76a.96.96 0 1 1-1.92 0 .96.96 0 0 1 1.92 0z"/>
+          </svg>
+        </a>
+      )}
+      {twitterUrl && (
+        <a href={twitterUrl} target="_blank" rel="noopener noreferrer" class="team-social twitter" title="Twitter / X" aria-label={`${name} on Twitter`}>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231zm-1.16 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/>
+          </svg>
+        </a>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-8) var(--space-6);
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: inherit;
+  gap: var(--space-4);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+.team-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.team-card-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}
+
+.team-photo-wrap {
+  width: 128px; height: 128px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 3px solid var(--color-border);
+  transition: border-color var(--transition-base);
+  margin-bottom: var(--space-2);
+}
+.team-card:hover .team-photo-wrap { border-color: var(--color-primary); }
+
+.team-photo {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.team-initials {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.team-info { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+
+.team-role {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.team-name {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-text);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.team-title {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.team-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  justify-content: center;
+  margin-top: var(--space-1);
+}
+.team-line-tag {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: rgba(107,76,154,0.1);
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+.team-email {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  padding-top: var(--space-3);
+  word-break: break-all;
+}
+
+.team-socials {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-top: var(--space-3);
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+  width: 100%;
+}
+.team-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-fast);
+}
+.team-social:hover {
+  transform: translateY(-2px);
+  color: #fff;
+}
+.team-social.orcid:hover     { background: #A6CE39; border-color: #A6CE39; color: #fff; }
+.team-social.scholar:hover   { background: #4285F4; border-color: #4285F4; color: #fff; }
+.team-social.linkedin:hover  { background: #0A66C2; border-color: #0A66C2; color: #fff; }
+.team-social.instagram:hover { background: #E1306C; border-color: #E1306C; color: #fff; }
+.team-social.twitter:hover   { background: #000; border-color: #000; color: #fff; }
+</style>

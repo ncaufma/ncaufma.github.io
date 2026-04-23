@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TeamCard from '../../components/ui/TeamCard.astro';
+import { getCollection } from 'astro:content';
+
+const all = await getCollection('team');
+
+const byOrder = (a, b) =>
+  (a.data.order ?? 99) - (b.data.order ?? 99) || a.data.name.localeCompare(b.data.name);
+
+const active = all.filter(m => m.data.active !== false);
+const alumni = all.filter(m => m.data.active === false);
+
+const pi              = active.filter(m => m.data.role === 'Principal Investigator').sort(byOrder);
+const postdocs        = active.filter(m => m.data.role === 'Postdoc' || m.data.role === 'Visiting Scholar').sort(byOrder);
+const phdStudents     = active.filter(m => m.data.role === 'PhD Student').sort(byOrder);
+const mastersStudents = active.filter(m => m.data.role === 'Masters Student').sort(byOrder);
+const undergrads      = active.filter(m => m.data.role === 'Undergraduate').sort(byOrder);
+
+const alumniPostdocs   = alumni.filter(m => m.data.role === 'Postdoc' || m.data.role === 'Visiting Scholar').sort(byOrder);
+const alumniPhd        = alumni.filter(m => m.data.role === 'PhD Student').sort(byOrder);
+const alumniMasters    = alumni.filter(m => m.data.role === 'Masters Student').sort(byOrder);
+const alumniUndergrads = alumni.filter(m => m.data.role === 'Undergraduate').sort(byOrder);
+
+const groups = [
+  { label: 'Principal Investigators',          items: pi },
+  { label: 'Postdoctoral / Visiting Scholars', items: postdocs },
+  { label: 'PhD Students',                     items: phdStudents },
+  { label: 'Master Students',                  items: mastersStudents },
+  { label: 'Undergraduate Students',           items: undergrads },
+].filter(g => g.items.length > 0);
+
+const alumniGroups = [
+  { label: 'Postdocs',               items: alumniPostdocs },
+  { label: 'Ph.D. Students',         items: alumniPhd },
+  { label: 'Master Students',        items: alumniMasters },
+  { label: 'Undergraduate Students', items: alumniUndergrads },
+].filter(g => g.items.length > 0);
+---
+<BaseLayout title="Team" description="Group members of NCA-UFMA: Principal Investigators, postdocs, students, and alumni.">
+
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="display-lg">Team Members</h1>
+      <p class="page-lead">Researchers, postdocs, students, and collaborators working to turn computing into societal impact.</p>
+    </div>
+  </div>
+
+  {groups.map(group => (
+    <section class="section section--sm">
+      <div class="container">
+        <h2 class="group-heading">{group.label}</h2>
+        <div class="team-grid">
+          {group.items.map((m, i) => (
+            <TeamCard
+              name={m.data.name}
+              title={m.data.title}
+              role={m.data.role}
+              photo={m.data.photo}
+              email={m.data.email}
+              researchLines={m.data.researchLines}
+              orcid={m.data.orcid}
+              googleScholar={m.data.googleScholar}
+              linkedin={m.data.linkedin}
+              instagram={m.data.instagram}
+              twitter={m.data.twitter}
+              slug={m.slug}
+              index={i}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  {alumniGroups.length > 0 && (
+    <section class="section alumni-section" style="background: var(--color-bg-alt)">
+      <div class="container">
+        <h2 class="section-title" style="margin-bottom: var(--space-8)">Alumni</h2>
+
+        {alumniGroups.map(group => (
+          <div class="alumni-block">
+            <h3 class="alumni-heading">{group.label}</h3>
+            <ul class="alumni-list">
+              {group.items.map(m => (
+                <li class="alumni-item">
+                  <a href={`/team/${m.slug}`}>{m.data.name}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+</BaseLayout>
+
+<style>
+.page-hero {
+  padding-block: var(--space-8) var(--space-10);
+  background: var(--color-bg-alt);
+}
+.page-hero .section-label { margin-bottom: var(--space-3); }
+.page-lead {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  max-width: 56ch;
+  margin-top: var(--space-4);
+}
+
+.group-heading {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
+  margin-bottom: var(--space-8);
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+@media (max-width: 900px) {
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .team-grid { grid-template-columns: 1fr; }
+}
+
+.alumni-section { margin-top: var(--space-8); }
+
+.alumni-block { margin-bottom: var(--space-8); }
+.alumni-block:last-child { margin-bottom: 0; }
+
+.alumni-heading {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+  padding-bottom: var(--space-2);
+  border-bottom: 1.5px solid var(--color-border);
+  margin-bottom: var(--space-4);
+}
+
+.alumni-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-2) var(--space-6);
+}
+.alumni-item a {
+  display: inline-block;
+  padding: 0.25rem 0;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  text-decoration: none;
+  border-bottom: 1.5px solid transparent;
+  transition: all var(--transition-fast);
+}
+.alumni-item a:hover {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+</style>

@@ -1,0 +1,29 @@
+{
+  "name": "nca-ufma-website",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "update:scholar": "node scripts/fetch-scholar.mjs",
+    "sync:scholar": "node scripts/fetch-scholar.mjs --sync",
+    "sync:scholar:dry": "node scripts/fetch-scholar.mjs --sync --dry-run",
+    "reclassify:pubs": "node scripts/reclassify-pubs.mjs",
+    "update:scholar:members": "node scripts/fetch-scholar-members.mjs"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.7",
+    "@astrojs/sitemap": "^3.1.6",
+    "astro": "^4.16.0",
+    "sharp": "^0.33.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "cheerio": "^1.0.0",
+    "node-fetch": "^3.3.2",
+    "typescript": "^5.5.0"
+  }
+}

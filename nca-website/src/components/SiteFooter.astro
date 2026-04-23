@@ -1,0 +1,106 @@
+---
+import ColorBar from './ui/ColorBar.astro';
+
+const addressLines = [
+  "NCA Lab, CCET Building",
+  "Av. dos Portugueses, 1966",
+  "Vila Bacanga, São Luís - MA, Brazil, 65080-805"
+];
+const mapsUrl = "https://www.google.com/maps/place/N%C3%BAcleo+de+computa%C3%A7%C3%A3o+Aplicada+UFMA/@-2.5588115,-44.3100921,17z";
+---
+<footer class="site-footer">
+  <ColorBar />
+  <div class="container footer-inner">
+
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <span class="logo-mark">NCA</span>
+        <span class="logo-sub">UFMA</span>
+      </div>
+      <p class="footer-tagline">Applied Computing Group · Federal University of Maranhão</p>
+    </div>
+
+    <address class="footer-address">
+      {addressLines.map(line => <span>{line}</span>)}
+      <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="footer-map-link">
+        View on Google Maps →
+      </a>
+    </address>
+
+  </div>
+</footer>
+
+<style>
+.site-footer {
+  background: var(--color-bg-dark);
+  color: rgba(255,255,255,0.75);
+  margin-top: auto;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  padding-block: var(--space-4);
+}
+
+.footer-brand { display: flex; flex-direction: column; gap: var(--space-1); }
+
+.footer-logo {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.logo-mark {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.04em;
+}
+.logo-sub {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.footer-tagline {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.55);
+  margin: 0;
+}
+
+.footer-address {
+  font-style: normal;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.6);
+  text-align: right;
+  max-width: 60ch;
+}
+.footer-map-link {
+  font-size: 0.8125rem;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+.footer-map-link:hover { color: #fff; }
+
+@media (max-width: 720px) {
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .footer-address { align-items: flex-start; text-align: left; }
+}
+</style>

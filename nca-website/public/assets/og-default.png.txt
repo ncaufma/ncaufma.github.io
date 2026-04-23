@@ -1,0 +1,1 @@
+[REQUIRED: Generate an Open Graph image (1200x630px) for the NCA-UFMA site and place it here as og-default.png]

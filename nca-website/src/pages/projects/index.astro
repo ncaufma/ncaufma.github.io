@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ui/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+const areas    = await getCollection('research-areas');
+const sorted   = projects.sort((a, b) => {
+  if (a.data.status === 'active' && b.data.status !== 'active') return -1;
+  if (b.data.status === 'active' && a.data.status !== 'active') return 1;
+  return a.data.title.localeCompare(b.data.title);
+});
+
+const areaMap: Record<string, string> = Object.fromEntries(areas.map(a => [a.slug, a.data.title]));
+---
+<BaseLayout title="Projects" description="NCA-UFMA project portfolio — partnerships with industry, government, and academia.">
+
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="display-lg">Projects</h1>
+      <p class="page-lead">
+        {projects.length} projects developed in partnership with companies, government agencies, and national and international universities.
+      </p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <!-- Filter bar -->
+      <div class="filter-bar" id="filter-bar" role="group" aria-label="Filter projects">
+        <button class="filter-chip active" data-filter="all">All ({projects.length})</button>
+        <button class="filter-chip" data-filter="active">
+          Active ({projects.filter(p => p.data.status === 'active').length})
+        </button>
+        <button class="filter-chip" data-filter="concluded">
+          Concluded ({projects.filter(p => p.data.status === 'concluded').length})
+        </button>
+        {areas.map(a => (
+          <button class="filter-chip" data-filter={`area-${a.slug}`}>
+            {a.data.title.split(' ').slice(0, 2).join(' ')}
+            ({projects.filter(p => p.data.researchArea === a.slug).length})
+          </button>
+        ))}
+      </div>
+
+      <!-- Project grid -->
+      <div class="projects-grid" id="projects-grid">
+        {sorted.map((p, i) => (
+          <div
+            class="project-wrapper"
+            data-status={p.data.status}
+            data-area={p.data.researchArea ?? ''}
+          >
+            <ProjectCard
+              title={p.data.title}
+              partner={p.data.partner}
+              status={p.data.status}
+              description={p.data.description}
+              highlights={p.data.highlights}
+              slug={p.slug}
+              featured={p.data.featured}
+              index={i}
+            />
+          </div>
+        ))}
+      </div>
+
+      <p class="no-results" id="no-results" style="display:none" aria-live="polite">
+        No projects found for this filter.
+      </p>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('#filter-bar .filter-chip');
+  const wrappers = document.querySelectorAll<HTMLElement>('#projects-grid .project-wrapper');
+  const noResults = document.getElementById('no-results')!;
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+
+      const filter = chip.dataset.filter!;
+      let visible = 0;
+
+      wrappers.forEach(w => {
+        const show =
+          filter === 'all' ||
+          (filter === 'active' && w.dataset.status === 'active') ||
+          (filter === 'concluded' && w.dataset.status === 'concluded') ||
+          filter === `area-${w.dataset.area}`;
+
+        w.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      noResults.style.display = visible === 0 ? '' : 'none';
+    });
+  });
+</script>
+
+<style>
+.page-hero {
+  padding-block: var(--space-8) var(--space-10);
+  background: var(--color-bg-alt);
+}
+.page-lead {
+  font-size: 1.125rem; color: var(--color-text-muted);
+  max-width: 56ch; margin-top: var(--space-4);
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.no-results {
+  text-align: center;
+  padding: var(--space-16);
+  color: var(--color-text-muted);
+  font-size: 1.125rem;
+}
+
+@media (max-width: 900px) {
+  .projects-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .projects-grid { grid-template-columns: 1fr; }
+}
+</style>

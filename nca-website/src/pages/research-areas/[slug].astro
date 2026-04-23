@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ui/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const areas = await getCollection('research-areas');
+  return areas.map(area => ({ params: { slug: area.slug }, props: { area } }));
+}
+
+const { area } = Astro.props;
+const { data } = area;
+const { Content } = await area.render();
+
+const allProjects = await getCollection('projects');
+const areaProjects = allProjects.filter(p => p.data.researchArea === area.slug);
+---
+<BaseLayout title={data.title} description={data.summary}>
+
+  <div class="page-hero" style={`--area-color: ${data.color ?? 'var(--color-primary)'}`}>
+    <div class="container">
+      <a href="/research-areas" class="back-link">← Research Areas</a>
+      <h1 class="display-md" style="margin-top: var(--space-4)">{data.title}</h1>
+      <p class="page-lead">{data.summary}</p>
+    </div>
+  </div>
+
+  <div class="container content-body">
+    <div class="area-content prose">
+      <Content />
+    </div>
+
+    {areaProjects.length > 0 && (
+      <section class="area-projects-section">
+        <h2 class="section-heading">Projects in this Area</h2>
+        <div class="projects-grid">
+          {areaProjects.map((p, i) => (
+            <ProjectCard
+              title={p.data.title}
+              partner={p.data.partner}
+              status={p.data.status}
+              description={p.data.description}
+              highlights={p.data.highlights}
+              slug={p.slug}
+              index={i}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+
+</BaseLayout>
+
+<style>
+.page-hero {
+  background: var(--color-bg-alt);
+  padding-block: var(--space-8) var(--space-10);
+  border-bottom: 4px solid var(--area-color, var(--color-primary));
+}
+.back-link {
+  font-size: 0.875rem; font-weight: 600;
+  color: var(--color-text-muted); text-decoration: none;
+  transition: color var(--transition-fast);
+}
+.back-link:hover { color: var(--color-primary); }
+.page-lead {
+  font-size: 1.125rem; color: var(--color-text-muted);
+  max-width: 60ch; margin-top: var(--space-4); line-height: 1.7;
+}
+.content-body {
+  max-width: 820px;
+  margin: 0 auto;
+  padding-block: var(--space-8);
+}
+.area-content { min-width: 0; }
+
+.area-projects-section { margin-top: var(--space-10); }
+.section-heading {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-3);
+  border-bottom: 1.5px solid var(--color-border);
+}
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+</style>
