@@ -1,16 +1,10 @@
 import { defineConfig } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://ncaufma.github.io',
   base: '/nca.ufma.github.io',
   output: 'static',
-  integrations: [
-    sitemap({
-      changefreq: 'weekly',
-      priority: 0.7,
-    }),
-  ],
+  integrations: [],
   build: {
     assets: '_assets',
   },
