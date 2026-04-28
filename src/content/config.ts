@@ -61,6 +61,7 @@ const team = defineCollection({
     researcherId:  ostr(),
     researchgate:  ostr(),
     googleScholar: ostr(),
+    lattes:        ostr(),
     instagram:     ostr(),
     linkedin:      ostr(),
     twitter:       ostr(),

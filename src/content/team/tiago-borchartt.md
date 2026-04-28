@@ -9,6 +9,7 @@ orcid: "0000-0002-3709-8385"
 researchgate: "https://www.researchgate.net/profile/Tiago-Borchartt"
 googleScholar: "https://scholar.google.com/citations?user=JQr2QBUAAAAJ"
 instagram: "https://instagram.com/tiagobonini"
+lattes:         ""
 linkedin: "https://www.linkedin.com/in/tiago-bonini-borchartt/"
 researchLines:
   - "Inteligência Artificial"

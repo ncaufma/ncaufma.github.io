@@ -8,6 +8,7 @@ Com expressiva produção científica em periódicos e conferências de alto imp
 email: "paiva@nca.ufma.br"
 orcid: "0000-0003-4921-0626"
 googleScholar: "https://scholar.google.com/citations?user=Rbcl1ycAAAAJ&hl=pt-PT"
+lattes:         ""
 linkedin: "https://www.linkedin.com/in/anselmo-cardoso-de-paiva-687617238/"
 researchLines:
   - Artificial Intelligence

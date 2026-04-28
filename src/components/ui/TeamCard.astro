@@ -8,6 +8,7 @@ interface Props {
   researchLines?: string[];
   orcid?: string;
   googleScholar?: string;
+  lattes?: string;
   linkedin?: string;
   instagram?: string;
   twitter?: string;
@@ -23,6 +24,7 @@ const {
   researchLines = [],
   orcid,
   googleScholar,
+  lattes,
   linkedin,
   instagram,
   twitter,
@@ -36,6 +38,7 @@ const placeholder = (val?: string) => !val || val.startsWith('[REQUIRED');
 
 const orcidUrl     = !placeholder(orcid) ? `https://orcid.org/${orcid}` : null;
 const scholarUrl   = !placeholder(googleScholar) ? googleScholar : null;
+const lattesUrl    = !placeholder(lattes) ? lattes : null;
 const linkedinUrl  = !placeholder(linkedin) ? linkedin : null;
 const instagramUrl = !placeholder(instagram)
   ? (instagram!.startsWith('http') ? instagram : `https://instagram.com/${instagram!.replace(/^@/, '')}`)
@@ -44,7 +47,7 @@ const twitterUrl   = !placeholder(twitter)
   ? (twitter!.startsWith('http') ? twitter : `https://twitter.com/${twitter!.replace(/^@/, '')}`)
   : null;
 
-const hasAnySocial = orcidUrl || scholarUrl || linkedinUrl || instagramUrl || twitterUrl;
+const hasAnySocial = orcidUrl || scholarUrl || lattesUrl || linkedinUrl || instagramUrl || twitterUrl;
 ---
 <div class="team-card reveal" style={`animation-delay: ${index * 0.07}s`}>
   <a href={`/team/${slug}`} class="team-card-main">
@@ -89,6 +92,13 @@ const hasAnySocial = orcidUrl || scholarUrl || linkedinUrl || instagramUrl || tw
         <a href={scholarUrl} target="_blank" rel="noopener noreferrer" class="team-social scholar" title="Google Scholar" aria-label={`${name} on Google Scholar`}>
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
             <path d="M12 2L1 9l4 2.9v4.4c1.6 2.4 4 4 7 4s5.4-1.6 7-4v-4.4l2-1.5V15h2V9z"/>
+          </svg>
+        </a>
+      )}
+      {lattesUrl && (
+        <a href={lattesUrl} target="_blank" rel="noopener noreferrer" class="team-social lattes" title="Currículo Lattes" aria-label={`Currículo Lattes de ${name}`}>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
           </svg>
         </a>
       )}
@@ -252,6 +262,7 @@ const hasAnySocial = orcidUrl || scholarUrl || linkedinUrl || instagramUrl || tw
 }
 .team-social.orcid:hover     { background: #A6CE39; border-color: #A6CE39; color: #fff; }
 .team-social.scholar:hover   { background: #4285F4; border-color: #4285F4; color: #fff; }
+.team-social.lattes:hover    { background: #1e6b9e; border-color: #1e6b9e; color: #fff; }
 .team-social.linkedin:hover  { background: #0A66C2; border-color: #0A66C2; color: #fff; }
 .team-social.instagram:hover { background: #E1306C; border-color: #E1306C; color: #fff; }
 .team-social.twitter:hover   { background: #000; border-color: #000; color: #fff; }

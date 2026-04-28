@@ -9,6 +9,7 @@ orcid: "[REQUIRED: ORCID identifier]"
 researchgate: "[REQUIRED: ResearchGate profile URL]"
 googleScholar: "[REQUIRED: Google Scholar author URL]"
 instagram: "[REQUIRED: Instagram handle or leave empty]"
+lattes:         ""
 linkedin: "[REQUIRED: LinkedIn profile URL]"
 researchLines:
   - "[REQUIRED: primary research line]"
