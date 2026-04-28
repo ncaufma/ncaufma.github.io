@@ -1,0 +1,22 @@
+siteName: "NCA-UFMA"
+siteTagline: "Applied Computing Group — Federal University of Maranhão"
+siteDescription: "Research and development center focused on Artificial Intelligence, Computer Vision, Medical Imaging, Virtual Reality, and applied computational solutions for socioeconomic and industrial development."
+logoFile: "[REQUIRED: insert logo filename here, e.g. nca-logo.svg]"
+googleScholarGroupUrl: "https://scholar.google.com/citations?user=wLHylkYAAAAJ&hl=en"
+formspreeEndpoint: "[REQUIRED: insert Formspree endpoint ID, e.g. xpzgkqvb]"
+instagramHandle: "[REQUIRED: insert Instagram handle without @]"
+linkedinPageUrl: "[REQUIRED: insert LinkedIn page URL]"
+youtubeChannelUrl: "[REQUIRED: insert YouTube channel URL if available]"
+emailPrimary: "paiva@nca.ufma.br"
+emailSecondary: "ari@nca.ufma.br"
+address: "[REQUIRED: insert full lab address]"
+googleMapsEmbed: "[REQUIRED: insert Google Maps embed iframe URL]"
+colors:
+  primary: "#2346E5"
+  secondary: "#6B4C9A"
+  accent: "#C8922A"
+  neutral: "#6C7A89"
+stats:
+  phd: 15
+  masters: 23
+  undergrad: 48

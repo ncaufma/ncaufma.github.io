@@ -1,0 +1,240 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(p => ({ params: { slug: p.slug }, props: { project: p } }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await project.render();
+
+const allTeam = await getCollection('team');
+const memberTeam = allTeam.filter(m => data.members?.includes(m.slug));
+
+const statusLabel: Record<string, string> = { active: 'Active', concluded: 'Concluded', paused: 'Paused' };
+const statusClass: Record<string, string> = { active: 'tag-accent', concluded: 'tag-neutral', paused: 'tag-secondary' };
+
+const hasVideo = data.video && !data.video.startsWith('[REQUIRED');
+const youtubeId = hasVideo && data.video ? data.video.replace(/.*(?:youtu\.be\/|v=)([^&]+).*/, '$1') : null;
+---
+<BaseLayout title={data.title} description={data.description}>
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="hero-breadcrumb">
+        <a href="/projects">← Projects</a>
+        {data.researchArea && <><span aria-hidden="true">/</span> <a href={`/research-areas/${data.researchArea}`}>{data.researchArea.replace(/-/g, ' ')}</a></>}
+      </div>
+
+      <div class="hero-meta">
+        <span class:list={['tag', statusClass[data.status] ?? 'tag-neutral']}>{statusLabel[data.status] ?? data.status}</span>
+        {data.featured && <span class="tag tag-primary">Featured</span>}
+      </div>
+
+      <h1 class="display-md" style="margin-top: var(--space-3)">{data.title}</h1>
+      {data.partner && <p class="project-partner">{data.partner}</p>}
+    </div>
+  </div>
+
+  <div class="container project-body">
+
+    {youtubeId && (
+      <div class="video-embed">
+        <iframe
+          src={`https://www.youtube.com/embed/${youtubeId}`}
+          title={`Video: ${data.title}`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      </div>
+    )}
+
+    {data.highlights.length > 0 && (
+      <div class="project-highlights-box">
+        <h2>Highlights</h2>
+        <ul>
+          {data.highlights.map(h => <li>{h}</li>)}
+        </ul>
+      </div>
+    )}
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <!-- Project info (moved from sidebar) -->
+    <section class="project-section">
+      <h2>Project Info</h2>
+      <div class="info-grid">
+        <div class="info-row">
+          <span class="info-label">Partner</span>
+          <span class="info-value">{data.partner ?? '—'}</span>
+        </div>
+        {data.funding && !data.funding.startsWith('[REQUIRED') && (
+          <div class="info-row">
+            <span class="info-label">Funding</span>
+            <span class="info-value">{data.funding}</span>
+          </div>
+        )}
+        {data.startDate && !data.startDate.startsWith('[REQUIRED') && (
+          <div class="info-row">
+            <span class="info-label">Start</span>
+            <span class="info-value">{data.startDate}</span>
+          </div>
+        )}
+        {data.endDate && !data.endDate.startsWith('[REQUIRED') && (
+          <div class="info-row">
+            <span class="info-label">End</span>
+            <span class="info-value">{data.endDate}</span>
+          </div>
+        )}
+        <div class="info-row">
+          <span class="info-label">Status</span>
+          <span class:list={['tag', statusClass[data.status]]}>{statusLabel[data.status]}</span>
+        </div>
+      </div>
+    </section>
+
+    {memberTeam.length > 0 && (
+      <section class="project-section">
+        <h2>Team</h2>
+        <ul class="member-list">
+          {memberTeam.map(m => (
+            <li>
+              <a href={`/team/${m.slug}`} class="member-link">
+                <div class="member-avatar">
+                  {m.data.photo && !m.data.photo.startsWith('[REQUIRED') ? (
+                    <img src={`/assets/team/${m.data.photo}`} alt={m.data.name} loading="lazy" />
+                  ) : (
+                    <span>{m.data.name.split(' ').map((w: string) => w[0]).slice(0,2).join('')}</span>
+                  )}
+                </div>
+                <span class="member-name">{m.data.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {data.tags.length > 0 && (
+      <section class="project-section">
+        <h2>Tags</h2>
+        <div class="tags-list">
+          {data.tags.map(t => <span class="tag tag-neutral">{t}</span>)}
+        </div>
+      </section>
+    )}
+  </div>
+
+</BaseLayout>
+
+<style>
+.page-hero {
+  background: var(--color-bg-alt);
+  padding-block: var(--space-8) var(--space-10);
+}
+.hero-breadcrumb {
+  display: flex; gap: var(--space-2); align-items: center;
+  font-size: 0.875rem; margin-bottom: var(--space-4);
+}
+.hero-breadcrumb a { color: var(--color-text-muted); text-decoration: none; transition: color var(--transition-fast); }
+.hero-breadcrumb a:hover { color: var(--color-primary); }
+.hero-meta { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.project-partner { font-size: 1rem; color: var(--color-accent); font-weight: 600; margin-top: var(--space-2); }
+
+.project-body {
+  max-width: 820px;
+  margin: 0 auto;
+  padding-block: var(--space-8);
+}
+
+.project-section { margin-top: var(--space-8); }
+.project-section h2 {
+  font-size: 1.15rem;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1.5px solid var(--color-border);
+}
+
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.95rem;
+  background: var(--color-bg);
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { color: var(--color-text-muted); font-weight: 500; }
+.info-value { font-weight: 600; text-align: right; }
+
+.video-embed {
+  position: relative; padding-bottom: 56.25%;
+  height: 0; overflow: hidden;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-8);
+}
+.video-embed iframe {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  border: none; border-radius: var(--radius-lg);
+}
+
+.project-highlights-box {
+  padding: var(--space-5) var(--space-6);
+  background: var(--color-bg-alt);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-bottom: var(--space-8);
+}
+.project-highlights-box h2 {
+  font-size: 0.9rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--color-primary); margin-bottom: var(--space-3);
+}
+.project-highlights-box ul { padding-left: 1.25rem; display: flex; flex-direction: column; gap: var(--space-2); }
+.project-highlights-box li { font-size: 0.9375rem; list-style: disc; }
+
+.member-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-2);
+  list-style: none;
+}
+.member-link {
+  display: flex; align-items: center; gap: var(--space-3);
+  text-decoration: none; color: inherit;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  transition: all var(--transition-fast);
+}
+.member-link:hover { border-color: var(--color-primary); background: var(--color-bg-alt); }
+.member-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  overflow: hidden; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.75rem; font-weight: 700;
+}
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.member-name { font-size: 0.875rem; font-weight: 600; }
+
+.tags-list { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+</style>

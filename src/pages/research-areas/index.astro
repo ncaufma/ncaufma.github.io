@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ResearchAreaCard from '../../components/ui/ResearchAreaCard.astro';
+import { getCollection } from 'astro:content';
+
+const areas    = (await getCollection('research-areas')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const projects = await getCollection('projects');
+const pubs     = await getCollection('publications');
+
+const projectCounts = areas.reduce((acc, a) => {
+  acc[a.slug] = projects.filter(p => p.data.researchArea === a.slug).length;
+  return acc;
+}, {} as Record<string, number>);
+
+const pubCounts = areas.reduce((acc, a) => {
+  acc[a.slug] = pubs.filter(p => p.data.researchArea === a.slug).length;
+  return acc;
+}, {} as Record<string, number>);
+---
+<BaseLayout title="Research Areas" description="Meet the six research lines of NCA-UFMA: AI, Computer Vision, Medical Imaging, VR/AR, NLP, and Optimization.">
+
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="display-lg">Research Areas</h1>
+      <p class="page-lead">Six major research lines combining scientific rigor and social impact in partnership with industry and government.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="grid-3">
+        {areas.map((area, i) => (
+          <ResearchAreaCard
+            title={area.data.title}
+            summary={area.data.summary}
+            slug={area.slug}
+            color={area.data.color}
+            projectCount={projectCounts[area.slug]}
+            publicationCount={pubCounts[area.slug]}
+            index={i}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+.page-hero {
+  padding-block: var(--space-8) var(--space-10);
+  background: var(--color-bg-alt);
+}
+.page-lead {
+  font-size: 1.125rem; color: var(--color-text-muted);
+  max-width: 54ch; margin-top: var(--space-4);
+}
+</style>

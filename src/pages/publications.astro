@@ -1,0 +1,197 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const pubs = await getCollection('publications');
+const sorted = pubs.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+
+const years = [...new Set(sorted.map(p => p.data.year).filter(Boolean))].sort((a, b) => b! - a!);
+const types = [...new Set(sorted.map(p => p.data.type).filter(Boolean))];
+
+const typeLabel: Record<string, string> = {
+  journal: 'Journal', conference: 'Conference', 'book-chapter': 'Book Chapter',
+  thesis: 'Thesis/Dissertation', preprint: 'Preprint', other: 'Other',
+};
+---
+<BaseLayout title="Publications" description="NCA-UFMA scientific publications in AI, Computer Vision, Medical Imaging, and other areas.">
+
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="display-lg">Publications</h1>
+      <p class="page-lead">{pubs.length} papers published in journals, conferences, and books.</p>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+
+      <!-- Filters -->
+      <div class="pub-filters">
+        <div class="filter-group">
+          <label class="filter-label" for="year-filter">Year</label>
+          <select id="year-filter" class="form-input" style="width:auto">
+            <option value="all">All years</option>
+            {years.map(y => <option value={String(y)}>{y}</option>)}
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="type-filter">Type</label>
+          <select id="type-filter" class="form-input" style="width:auto">
+            <option value="all">All types</option>
+            {types.map(t => <option value={t}>{typeLabel[t] ?? t}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <!-- Publication list -->
+      {sorted.length === 0 ? (
+        <div class="pub-empty">
+          <p>No publications registered yet.</p>
+          <p class="text-sm text-muted" style="margin-top: var(--space-2)">
+            Run <code>npm run update:scholar</code> to import publications from Google Scholar,
+            or add files manually in <code>content/publications/</code>.
+          </p>
+        </div>
+      ) : (
+        <ul class="pub-list" id="pub-list">
+          {sorted.map(p => (
+            <li
+              class="pub-item reveal"
+              data-year={String(p.data.year ?? '')}
+              data-type={p.data.type}
+            >
+              <div class="pub-type-badge">
+                <span class:list={['tag', p.data.type === 'journal' ? 'tag-primary' : p.data.type === 'conference' ? 'tag-secondary' : 'tag-neutral']}>
+                  {typeLabel[p.data.type] ?? p.data.type}
+                </span>
+                {p.data.year && <span class="pub-year">{p.data.year}</span>}
+              </div>
+
+              <div class="pub-content">
+                <h3 class="pub-title">
+                  {p.data.doi ? (
+                    <a href={`https://doi.org/${p.data.doi}`} target="_blank" rel="noopener noreferrer">
+                      {p.data.title}
+                    </a>
+                  ) : p.data.url ? (
+                    <a href={p.data.url} target="_blank" rel="noopener noreferrer">
+                      {p.data.title}
+                    </a>
+                  ) : (
+                    p.data.title
+                  )}
+                </h3>
+
+                {p.data.authors.length > 0 && (
+                  <p class="pub-authors">{p.data.authors.join('; ')}</p>
+                )}
+
+                {p.data.venue && (
+                  <p class="pub-venue">{p.data.venue}</p>
+                )}
+
+                {p.data.doi && (
+                  <a
+                    href={`https://doi.org/${p.data.doi}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="pub-doi"
+                  >
+                    DOI: {p.data.doi}
+                  </a>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <p id="pub-no-results" class="pub-empty" style="display:none" aria-live="polite">
+        No publications found for the selected filters.
+      </p>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<script>
+  const yearSel  = document.getElementById('year-filter') as HTMLSelectElement;
+  const typeSel  = document.getElementById('type-filter') as HTMLSelectElement;
+  const items    = document.querySelectorAll<HTMLElement>('#pub-list .pub-item');
+  const noResult = document.getElementById('pub-no-results')!;
+
+  function applyFilters() {
+    const year = yearSel.value;
+    const type = typeSel.value;
+    let visible = 0;
+    items.forEach(item => {
+      const matchYear = year === 'all' || item.dataset.year === year;
+      const matchType = type === 'all' || item.dataset.type === type;
+      const show = matchYear && matchType;
+      item.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    noResult.style.display = visible === 0 ? '' : 'none';
+  }
+
+  yearSel?.addEventListener('change', applyFilters);
+  typeSel?.addEventListener('change', applyFilters);
+</script>
+
+<style>
+.page-hero { padding-block: var(--space-8) var(--space-10); background: var(--color-bg-alt); }
+.page-lead { font-size: 1.125rem; color: var(--color-text-muted); max-width: 52ch; margin-top: var(--space-4); }
+
+.pub-filters {
+  display: flex; gap: var(--space-4); align-items: flex-end;
+  flex-wrap: wrap; margin-bottom: var(--space-8);
+}
+.filter-group { display: flex; flex-direction: column; gap: var(--space-1); }
+.filter-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-muted); }
+
+.pub-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+
+.pub-item {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: var(--space-6);
+  padding: var(--space-5) 0;
+  border-bottom: 1.5px solid var(--color-border);
+  align-items: start;
+}
+.pub-item:last-child { border-bottom: none; }
+.pub-item:hover { background: rgba(0,0,0,0.01); }
+
+.pub-type-badge { display: flex; flex-direction: column; gap: var(--space-2); }
+.pub-year { font-size: 0.875rem; font-weight: 700; color: var(--color-text-muted); }
+
+.pub-content { display: flex; flex-direction: column; gap: var(--space-1); }
+.pub-title { font-size: 1rem; font-weight: 700; line-height: 1.4; }
+.pub-title a { color: var(--color-primary); text-decoration: none; }
+.pub-title a:hover { text-decoration: underline; }
+.pub-authors { font-size: 0.875rem; color: var(--color-text-muted); }
+.pub-venue { font-size: 0.875rem; color: var(--color-text); font-style: italic; }
+.pub-doi { font-size: 0.75rem; color: var(--color-neutral); text-decoration: none; font-family: monospace; }
+.pub-doi:hover { color: var(--color-primary); }
+
+.pub-empty {
+  padding: var(--space-16);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--color-border);
+}
+.pub-empty code {
+  background: rgba(0,0,0,0.06);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .pub-item { grid-template-columns: 1fr; gap: var(--space-3); }
+  .pub-type-badge { flex-direction: row; align-items: center; }
+}
+</style>

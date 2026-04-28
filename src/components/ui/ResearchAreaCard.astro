@@ -1,0 +1,127 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  slug: string;
+  color?: string;
+  projectCount?: number;
+  publicationCount?: number;
+  index?: number;
+}
+const { title, summary, slug, color = 'var(--color-primary)', projectCount = 0, publicationCount = 0, index = 0 } = Astro.props;
+
+const icons: Record<string, string> = {
+  'ai-data-science': '🧠',
+  'virtual-augmented-reality': '🥽',
+  'computer-vision-medical-imaging': '👁️',
+  'natural-language-processing': '💬',
+  'software-engineering-ux': '⚙️',
+  'logistics-optimization': '📦',
+};
+const icon = icons[slug] ?? '🔬';
+---
+<a href={`/research-areas/${slug}`} class="area-card reveal" style={`--card-color: ${color}; animation-delay: ${index * 0.08}s`}>
+  <div class="area-card-top">
+    <span class="area-icon" aria-hidden="true">{icon}</span>
+    <div class="area-meta">
+      {projectCount > 0 && <span class="area-badge">{projectCount} project{projectCount !== 1 ? 's' : ''}</span>}
+      {publicationCount > 0 && <span class="area-badge area-badge--light">{publicationCount} pub.</span>}
+    </div>
+  </div>
+  <h3 class="area-title">{title}</h3>
+  <p class="area-summary">{summary}</p>
+  <span class="area-cta">See more →</span>
+</a>
+
+<style>
+.area-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+.area-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--card-color);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition-base);
+  border-radius: 0 0 2px 2px;
+}
+.area-card:hover {
+  border-color: var(--card-color);
+  box-shadow: 0 8px 30px color-mix(in srgb, var(--card-color) 15%, transparent);
+  transform: translateY(-4px);
+}
+.area-card:hover::before { transform: scaleX(1); }
+
+.area-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.area-icon {
+  font-size: 2rem;
+  line-height: 1;
+  display: block;
+}
+
+.area-meta {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.area-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  background: rgba(35,70,229,0.1);
+  color: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+.area-badge--light {
+  background: var(--color-bg-alt);
+  color: var(--color-text-muted);
+}
+
+.area-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.3;
+}
+
+.area-summary {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.area-cta {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--card-color);
+  margin-top: auto;
+}
+</style>
