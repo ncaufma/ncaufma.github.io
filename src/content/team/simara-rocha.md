@@ -1,19 +1,21 @@
 ---
-name: "[REQUIRED: Full name — seed: Simara Rocha]"
-title: "[REQUIRED: Academic title / position]"
+name: "Simara Vieira da Rocha"
+title: "Associate Professor"
 role: "Principal Investigator"
 photo: "[REQUIRED: insert photo filename, e.g. simara-rocha.jpg]"
-bio: "[REQUIRED: insert short bio]"
-email: "[REQUIRED: institutional email]"
-orcid: "[REQUIRED: ORCID identifier]"
-researchgate: "[REQUIRED: ResearchGate profile URL]"
+bio: "Professor at the Federal University of Maranhão (UFMA). Her official UFMA research record includes work on software engineering, computational intelligence, usability and user experience, chatbots, energy-consumption systems, and computer vision applied to medical images. Her research also includes mammography-image analysis using machine-learning and geostatistical methods."
+email: "simara@nca.ufma.br"
+orcid: "0000-0003-3318-7281"
+researchgate: "https://www.researchgate.net/profile/Simara-Rocha-2"
 googleScholar: "[REQUIRED: Google Scholar author URL]"
 instagram: "[REQUIRED: Instagram handle or leave empty]"
 lattes:         ""
 linkedin: "[REQUIRED: LinkedIn profile URL]"
 researchLines:
-  - "[REQUIRED: primary research line]"
-  - "[REQUIRED: secondary research line]"
+  - Software Engineering
+  - Computational Intelligence
+  - Computer Vision & Image Processing
+  - Computing Education
 highlights:
   - "[REQUIRED: notable achievement or fellowship]"
 active: true

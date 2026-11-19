@@ -1,5 +1,46 @@
-# Bloquear arquivos de ícones do sistema
-Icon?
-.DS_Store
-Thumbs.db
+# Dependencies
+node_modules/
 
+# Astro build output and cache
+.dist/
+dist/
+.astro/
+.cache/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+Thumbs.db
+ehthumbs.db
+
+# Temporary and backup files
+*~
+*.tmp
+*.temp
+*.bak
+*.swp
+~$*
