@@ -1,4 +1,4 @@
----
+﻿---
 name: "Anselmo Cardoso de Paiva"
 title: "Full Professor"
 role: "Principal Investigator"
@@ -17,7 +17,8 @@ researchLines:
   - Medical Image Processing
   - Volumetric Visualization
 highlights:
-  - CNPq Research Productivity Fellowship
+  - "Promoted to Full Professor at UFMA in 2017."
+  - "Coordinated the NCA-UFMA and coauthored work behind the 2025 ICEIS Best Paper on truck dispatch optimization at the Port of Itaqui."
 order: 1
 active: true
 ---

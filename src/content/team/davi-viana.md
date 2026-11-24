@@ -1,9 +1,9 @@
----
+﻿---
 name: "Davi Viana dos Santos"
 title: "Assistant Professor"
 role: "Principal Investigator"
 photo: "davi-viana.jpg"
-bio: "Associate Professor at the Federal University of Maranhão (UFMA). He holds a bachelor's degree in Computer Science and master's and doctoral degrees in Informatics from the Federal University of Amazonas (UFAM). He is a permanent faculty member of the UFMA graduate programs in Computer Science and the UFMA/UFPI Doctorate in Computer Science. His interests include software engineering, software quality, experimental software engineering, information systems, and computing education."
+bio: "Assistant Professor at the Federal University of Maranhão (UFMA). He holds a bachelor's degree in Computer Science and master's and doctoral degrees in Informatics from the Federal University of Amazonas (UFAM). He is a permanent faculty member of the UFMA graduate programs in Computer Science and the UFMA/UFPI Doctorate in Computer Science. His interests include software engineering, software quality, experimental software engineering, information systems, and computing education."
 email: "davi.viana@ufma.br"
 orcid: "0000-0003-0470-549X"
 researchgate: "https://www.researchgate.net/profile/Davi-Viana-2"
@@ -17,7 +17,8 @@ researchLines:
   - Information Systems
   - Computing Education
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Invited by the UNA-SUS network to present a webinar on digital accessibility in UFMA's online health courses."
+  - "Coauthored a published study about an accessible digital book for self-paced health-professional training."
 active: true
 ---
 

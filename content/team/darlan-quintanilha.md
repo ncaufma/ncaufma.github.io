@@ -14,7 +14,8 @@ researchLines:
   - "[REQUIRED: primary research line]"
   - "[REQUIRED: secondary research line]"
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Served as interim head of UFMA's Department of Informatics from 2022 and became coordinator of the undergraduate Computer Science program for 2025–2027."
+  - "Advises research in AI and medical imaging; a student project he supervised on tuberculosis diagnosis in radiographs was recognized in UFMA's 2024 FAPEMA award list."
 active: true
 ---
 

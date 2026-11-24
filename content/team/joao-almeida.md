@@ -14,7 +14,9 @@ researchLines:
   - "[REQUIRED: primary research line]"
   - "[REQUIRED: secondary research line]"
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Winner of the Senior Researcher award in Exact Sciences and Engineering at the 19th FAPEMA Awards (2024)."
+  - "Ranked third globally in a bibliometric study of publications and citations on AI and strabismus (2002–2023); UFMA ranked third among institutions."
+  - "Coauthored the ICEIS 2025 Best Paper on optimizing truck dispatch at the Port of Itaqui."
 active: true
 ---
 

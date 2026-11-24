@@ -16,7 +16,8 @@ researchLines:
   - Computer Vision
   - Digital Games
 highlights:
-  - "Bolsista Produtividade da FAPEMA"
+  - "Coauthored the ICEIS 2025 Best Paper on truck dispatch optimization at the Port of Itaqui."
+  - "Coordinates UFMA's bachelor's degree in Artificial Intelligence and its AI teaching laboratory."
 active: true
 ---
 

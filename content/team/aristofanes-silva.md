@@ -14,8 +14,8 @@ researchLines:
   - Computer Vision
   - Medical Imaging
 highlights:
-  - CNPq Research Productivity Fellowship
-  - Ranked among top 5 globally in AI for Strabismus publications
+  - "Received 13 FAPEMA awards over more than two decades, a record highlighted by the foundation's magazine."
+  - "Ranked fifth globally in a bibliometric study of publications and citations on AI and strabismus (2002–2023); UFMA ranked third among institutions."
 order: 2
 active: true
 ---

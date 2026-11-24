@@ -14,7 +14,8 @@ researchLines:
   - "[REQUIRED: primary research line]"
   - "[REQUIRED: secondary research line]"
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "UFMA joined the national PROFCOMP professional master's program in computing education, with Simara Vieira da Rocha contributing to its launch and local implementation."
+  - "Received first place for an advisee's oral presentation in Exact and Technological Sciences at UFMA's 2017 Scientific Initiation Seminar."
 active: true
 ---
 

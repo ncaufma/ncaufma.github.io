@@ -14,5 +14,9 @@ researchLines:
   - Assistive Technologies
   - Accessibility
   - Digital Technologies in Education
+highlights:
+  - "Best Paper, ERGODESIGN 2022 (PUC-Rio)."
+  - "Received second and third place in the 2021 FAPEMA Women Scientists of Maranhão Junior Researcher category as an advisor."
+  - "Coauthored a 2025 ERGODESIGN & USIHC paper on accessible textile labels for people with visual impairments."
 active: true
 ---

@@ -18,7 +18,9 @@ researchLines:
   - Medical Image Processing
   - Natural Language Processing
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Coauthored a 2021 study of Bayesian-optimized CNNs for pediatric pneumonia detection and classification, reporting 96.4% detection accuracy."
+  - "Coauthored the PCPAm dataset of histopathological images for penile-cancer classification, published in 2025."
+  - "UFMA projects include deep-learning methods for detecting endometriosis, cancer and ophthalmic diseases."
 active: true
 ---
 

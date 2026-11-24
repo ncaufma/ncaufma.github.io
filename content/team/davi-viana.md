@@ -14,7 +14,9 @@ researchLines:
   - "[REQUIRED: primary research line]"
   - "[REQUIRED: secondary research line]"
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Invited by the UNA-SUS network to present a webinar on digital accessibility in UFMA's online health courses."
+  - "Coauthored a published study describing an accessible digital book for self-paced health-professional training."
+  - "Served as coordinator of UFMA's Graduate Program in Computer Science and its PIBIC/PIBITI undergraduate research programs."
 active: true
 ---
 

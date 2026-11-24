@@ -3,7 +3,7 @@ name: "João Dallyson Sousa de Almeida"
 title: "Associate Professor"
 role: "Principal Investigator"
 photo: "joao-almeida.jpg"
-bio: "Associate Professor at the Federal University of Maranhão (UFMA), where he coordinates the VIPLab-UFMA Laboratory of Vision and Image Processing and serves as vice-coordinator of the Graduate Program in Computer Science. He holds bachelor's, master's, and doctoral degrees from UFMA. His research focuses on image processing, pattern recognition, machine learning, telemedicine, and ophthalmic medical imaging, including the diagnosis of vision disorders in images and videos."
+bio: "Professor at the Federal University of Maranhão (UFMA), where he coordinates the VIPLab-UFMA Laboratory of Vision and Image Processing and serves as vice-coordinator of the Graduate Program in Computer Science. He holds bachelor's, master's, and doctoral degrees from UFMA. His research focuses on image processing, pattern recognition, machine learning, telemedicine, and ophthalmic medical imaging, including the diagnosis of vision disorders in images and videos."
 email: "jdallyson@nca.ufma.br"
 orcid: "0000-0001-7013-9700"
 researchgate: "https://www.researchgate.net/profile/Joao-Almeida-12"
@@ -18,7 +18,9 @@ researchLines:
   - Telemedicine
   - Ophthalmic Medical Imaging
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Winner of the Senior Researcher award in Exact Sciences and Engineering at the 19th FAPEMA Awards (2024)."
+  - "Ranked third globally in a bibliometric study of AI and strabismus publications (2002–2023); UFMA ranked third among institutions."
+  - "Coauthored the ICEIS 2025 Best Paper on truck dispatch optimization at the Port of Itaqui."
 active: true
 ---
 

@@ -14,7 +14,8 @@ researchLines:
   - "[REQUIRED: primary research line]"
   - "[REQUIRED: secondary research line]"
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Coauthored the ICEIS 2025 Best Paper on mathematical modeling and simulation to optimize truck dispatch at the Port of Itaqui; the reported model reduced congestion by up to 60%."
+  - "Recognized as a finalist in UFMA's 2025 Researcher of the Year award process in the Junior Researcher category for Exact Sciences, Earth Sciences and Engineering."
 active: true
 ---
 

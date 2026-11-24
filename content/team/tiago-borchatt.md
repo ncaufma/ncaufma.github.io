@@ -14,7 +14,8 @@ researchLines:
   - "[REQUIRED: primary research line]"
   - "[REQUIRED: secondary research line]"
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Coauthored the ICEIS 2025 Best Paper on optimizing truck dispatch at the Port of Itaqui."
+  - "Coordinates UFMA's bachelor's degree in Artificial Intelligence and its AI teaching laboratory."
 active: true
 ---
 

@@ -15,7 +15,8 @@ researchLines:
   - User Experience
   - Human-Computer Interaction
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Selected as tutor of UFMA's Computer Science PET group, supporting student projects across teaching, research and outreach."
+  - "Serves as a permanent faculty member of PROFCOMP, the national professional master's program in computing education for basic education."
 active: true
 order: 7
 ---

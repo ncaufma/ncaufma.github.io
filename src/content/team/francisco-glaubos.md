@@ -1,4 +1,4 @@
----
+﻿---
 name: "Francisco Glaubos Nunes Clímaco"
 title: "Assistant Professor"
 role: "Principal Investigator"
@@ -17,7 +17,8 @@ researchLines:
   - Mathematical Modeling
   - Logistics & Transportation
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Coauthored the ICEIS 2025 Best Paper on truck dispatch optimization at the Port of Itaqui; the reported model reduced congestion by up to 60%."
+  - "Named a finalist in UFMA's 2025 Researcher of the Year award process, Junior Researcher category, Exact Sciences, Earth Sciences and Engineering."
 active: true
 ---
 

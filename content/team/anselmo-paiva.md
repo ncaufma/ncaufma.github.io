@@ -16,9 +16,8 @@ researchLines:
   - Virtual & Augmented Reality
   - Artificial Intelligence
 highlights:
-  - CNPq Research Productivity Fellowship
-  - Ranked among Top 60 Research.com Best Computer Science Scientists in Brazil
-  - Ranked among top 5 globally in AI for Strabismus publications
+  - "Promoted to Full Professor at UFMA in 2017, the highest rank in the university's faculty career."
+  - "Coordinated the NCA-UFMA and contributed to the 2025 ICEIS Best Paper on truck dispatch optimization at the Port of Itaqui."
 order: 1
 active: true
 ---

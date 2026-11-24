@@ -17,7 +17,8 @@ researchLines:
   - Computer Vision & Image Processing
   - Computing Education
 highlights:
-  - "[REQUIRED: notable achievement or fellowship]"
+  - "Contributed to UFMA's participation in PROFCOMP, a national professional master's program in computing education."
+  - "Received first place for an advisee's oral presentation in Exact and Technological Sciences at UFMA's 2017 Scientific Initiation Seminar."
 active: true
 ---
 
