@@ -1,8 +1,8 @@
----
+﻿---
 name: "Simara Vieira da Rocha"
 title: "Associate Professor"
 role: "Principal Investigator"
-photo: "[REQUIRED: insert photo filename, e.g. simara-rocha.jpg]"
+photo: "simara-rocha.jpeg"
 bio: "Professor at the Federal University of Maranhão (UFMA). Her official UFMA research record includes work on software engineering, computational intelligence, usability and user experience, chatbots, energy-consumption systems, and computer vision applied to medical images. Her research also includes mammography-image analysis using machine-learning and geostatistical methods."
 email: "simara@nca.ufma.br"
 orcid: "0000-0003-3318-7281"

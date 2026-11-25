@@ -2,7 +2,7 @@
 name: "Tiago Bonini Borchatt"
 title: "Associate Professor"
 role: "Principal Investigator"
-photo: "tiago-borchartt.jpg"
+photo: "tiago-borchartt.jpeg"
 bio: "Professor in the Department of Informatics at the Federal University of Maranhão (UFMA) since 2013. He holds a bachelor's degree in Computer Science from the Franciscan University Center, a master's degree in Computing from the Federal University of Santa Maria, and a Ph.D. and postdoctoral qualification in Computing from the Federal Fluminense University. His research interests include visual computing, image processing, digital games, artificial intelligence, and mobile computing."
 email: "tiago.bonini@ufma.br"
 orcid: "0000-0002-3709-8385"

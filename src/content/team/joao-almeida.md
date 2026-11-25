@@ -1,8 +1,8 @@
----
+﻿---
 name: "João Dallyson Sousa de Almeida"
 title: "Associate Professor"
 role: "Principal Investigator"
-photo: "joao-almeida.jpg"
+photo: "joao-almeida.png"
 bio: "Professor at the Federal University of Maranhão (UFMA), where he coordinates the VIPLab-UFMA Laboratory of Vision and Image Processing and serves as vice-coordinator of the Graduate Program in Computer Science. He holds bachelor's, master's, and doctoral degrees from UFMA. His research focuses on image processing, pattern recognition, machine learning, telemedicine, and ophthalmic medical imaging, including the diagnosis of vision disorders in images and videos."
 email: "jdallyson@nca.ufma.br"
 orcid: "0000-0001-7013-9700"
