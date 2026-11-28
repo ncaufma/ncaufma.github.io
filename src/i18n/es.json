@@ -1,0 +1,315 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "team": "Equipo",
+    "research": "Investigación",
+    "projects": "Proyectos",
+    "publications": "Publicaciones",
+    "partners": "Socios",
+    "homeAria": "NCA-UFMA — Página de inicio",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "language": "Idioma"
+  },
+  "footer": {
+    "tagline": "Grupo de Computación Aplicada · Universidad Federal de Maranhão",
+    "maps": "Ver en Google Maps",
+    "address": [
+      "Laboratorio NCA, Edificio CCET",
+      "Av. dos Portugueses, 1966",
+      "Vila Bacanga, São Luís - MA, Brasil, 65080-805"
+    ]
+  },
+  "layout": {
+    "skip": "Ir al contenido",
+    "defaultDescription": "NCA-UFMA — Grupo de Computación Aplicada.",
+    "backToTop": "Volver arriba"
+  },
+  "hero": {
+    "title": "Grupo de Computación Aplicada",
+    "tagline": "Aplicando la computación para el desarrollo de la sociedad y creando soluciones innovadoras.",
+    "leadBefore": "es un grupo de investigación de la",
+    "leadLink": "Universidad Federal de Maranhão, Brasil",
+    "leadAfter": "dedicado al avance de la Inteligencia Artificial, Visión por Computador, Imágenes Médicas, Realidad Virtual, Procesamiento de Lenguaje Natural y Optimización para crear soluciones de alto impacto para la sociedad.",
+    "eyebrow": "Computación aplicada · UFMA",
+    "headline": "Computación aplicada al impacto en el mundo real.",
+    "summary": "NCA-UFMA desarrolla investigación y soluciones tecnológicas en inteligencia artificial, visión por computador, procesamiento de lenguaje natural, realidades inmersivas, ingeniería de software y optimización.",
+    "exploreProjects": "Explorar proyectos",
+    "viewAreas": "Ver áreas de investigación",
+    "areasAria": "Áreas de investigación de NCA-UFMA"
+  },
+  "cards": {
+    "active": "Activo",
+    "concluded": "Concluido",
+    "paused": "Pausado",
+    "featured": "Destacado",
+    "seeDetails": "Ver detalles",
+    "seeMore": "Ver más",
+    "project": "proyecto",
+    "projects": "proyectos",
+    "publication": "pub."
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "lead": "La página que buscas no existe o fue movida.",
+    "home": "Ir al inicio",
+    "projects": "Ver proyectos"
+  },
+  "roles": {
+    "Principal Investigator": "Investigador principal",
+    "Postdoc": "Posdoctorado",
+    "Visiting Scholar": "Investigador visitante",
+    "PhD Student": "Estudiante de doctorado",
+    "Masters Student": "Estudiante de maestría",
+    "Undergraduate": "Estudiante de grado",
+    "Staff": "Personal"
+  },
+  "home": {
+    "description": "Grupo de Computación Aplicada — Universidad Federal de Maranhão. Investigación en IA, Visión por Computador, Imágenes Médicas, RV/RA, PLN y Optimización.",
+    "statsAria": "NCA-UFMA en cifras",
+    "projects": "Proyectos",
+    "researchAreas": "Áreas de investigación",
+    "researchers": "Investigadores",
+    "partners": "Socios",
+    "researchKicker": "Qué investigamos",
+    "researchTitle": "Áreas de investigación",
+    "exploreAreas": "Explorar todas las áreas →",
+    "selectedWork": "Trabajo seleccionado",
+    "featuredProjects": "Proyectos destacados",
+    "viewProjects": "Ver todos los proyectos →",
+    "collaborationNetwork": "Red de colaboración",
+    "meetPartners": "Conocer a los socios →",
+    "workWith": "Trabaja con NCA-UFMA",
+    "ctaTitle": "Convierte la investigación aplicada en soluciones reales.",
+    "aboutCta": "Acerca del NCA-UFMA"
+  },
+  "team": {
+    "pageTitle": "Equipo",
+    "description": "Equipo de NCA-UFMA.",
+    "kicker": "Personas en NCA-UFMA",
+    "heading": "Conoce al equipo",
+    "lead": "Investigadores, posdoctorados y estudiantes que trabajan en computación aplicada, industria y sociedad.",
+    "exploreAreas": "Explorar áreas de investigación",
+    "statsAria": "Estadísticas del equipo",
+    "stats": {
+      "active": "Miembros activos",
+      "pi": "Investigadores principales",
+      "postdocsPhd": "Posdoctorados e investigadores doctorales",
+      "alumni": "Egresados"
+    },
+    "filtersAria": "Filtrar miembros del equipo",
+    "filters": {
+      "all": "Todos",
+      "pi": "Investigadores principales",
+      "postdocs": "Posdoctorado",
+      "phd": "Doctorado",
+      "masters": "Maestría",
+      "undergrads": "Grado",
+      "staff": "Personal",
+      "alumni": "Egresados"
+    },
+    "groups": {
+      "pi": "Investigadores principales",
+      "postdocs": "Posdoctorado e investigadores visitantes",
+      "phd": "Estudiantes de doctorado",
+      "masters": "Estudiantes de maestría",
+      "undergrads": "Estudiantes de grado",
+      "staff": "Personal"
+    },
+    "ranks": {
+      "full": "Profesores titulares",
+      "associate": "Profesores asociados",
+      "assistant": "Profesores adjuntos",
+      "assistente": "Profesores asistentes",
+      "other": "Otros"
+    },
+    "railHint": "Desliza horizontalmente para ver los miembros",
+    "alumniGroups": {
+      "postdocs": "Posdoctorados",
+      "phd": "Estudiantes de doctorado",
+      "masters": "Estudiantes de maestría",
+      "undergrads": "Estudiantes de grado"
+    },
+    "alumni": "Egresados",
+    "backToTeam": "← Volver al equipo",
+    "photoAlt": "Foto de {name}",
+    "academicProfile": "Perfil académico",
+    "academicSummary": "Resumen académico",
+    "academicPosition": "Posición académica",
+    "roleAt": "Rol en NCA-UFMA",
+    "researchLines": "Líneas de investigación",
+    "researchLinesHeading": "Líneas de investigación",
+    "highlights": "Aspectos destacados",
+    "associatedProjects": "Proyectos asociados",
+    "fallbackTitle": "Equipo"
+  },
+  "projects": {
+    "pageTitle": "Proyectos",
+    "description": "Portafolio de proyectos de NCA-UFMA.",
+    "lead": "{count} proyectos desarrollados en colaboración con empresas, organismos públicos y universidades nacionales e internacionales.",
+    "filtersAria": "Filtrar proyectos",
+    "all": "Todos",
+    "active": "Activos",
+    "concluded": "Concluidos",
+    "noResults": "No se encontraron proyectos para este filtro.",
+    "back": "← Proyectos",
+    "highlights": "Aspectos destacados",
+    "info": "Información del proyecto",
+    "partner": "Socio",
+    "funding": "Financiación",
+    "start": "Inicio",
+    "end": "Fin",
+    "status": "Estado",
+    "team": "Equipo",
+    "tags": "Etiquetas",
+    "video": "Video: {title}",
+    "fallbackTitle": "Proyecto"
+  },
+  "researchAreas": {
+    "pageTitle": "Áreas de investigación",
+    "description": "Áreas de investigación de NCA-UFMA.",
+    "lead": "Líneas de investigación que combinan rigor científico e impacto social.",
+    "back": "← Áreas de investigación",
+    "fallbackTitle": "Área de investigación",
+    "appliedWork": "Trabajo aplicado",
+    "projectsInArea": "Proyectos en esta área",
+    "scientificOutput": "Producción científica",
+    "selectedPublications": "Publicaciones seleccionadas"
+  },
+  "publications": {
+    "pageTitle": "Publicaciones",
+    "description": "Publicaciones científicas de NCA-UFMA",
+    "lead": "{count} artículos publicados en revistas, conferencias y libros.",
+    "year": "Año",
+    "allYears": "Todos los años",
+    "type": "Tipo",
+    "allTypes": "Todos los tipos",
+    "empty": "Aún no hay publicaciones registradas.",
+    "noResults": "No se encontraron publicaciones para los filtros seleccionados.",
+    "types": {
+      "journal": "Revista",
+      "conference": "Conferencia",
+      "book-chapter": "Capítulo de libro",
+      "thesis": "Tesis/Disertación",
+      "preprint": "Preprint",
+      "other": "Otro"
+    }
+  },
+  "collaborations": {
+    "pageTitle": "Socios",
+    "description": "Colaboradores y socios de NCA-UFMA",
+    "heading": "Socios y colaboradores",
+    "lead": "Una red de colaboración que reúne universidades, empresas industriales y organismos públicos en Brasil y en el exterior.",
+    "logoAlt": "Logo {name}",
+    "flipShowFormer": "Mostrar nombre anterior",
+    "flipShowCurrent": "Mostrar nombre actual",
+    "expandShowAbsorbed": "Mostrar marcas absorbidas",
+    "expandHideAbsorbed": "Ocultar marcas absorbidas",
+    "absorbedLabel": "Marcas absorbidas",
+    "expandShowFullName": "Mostrar nombre completo",
+    "expandShowShortName": "Mostrar abreviatura",
+    "groups": {
+      "university": "Universidades e institutos de investigación",
+      "company": "Empresas e industria",
+      "government": "Organismos públicos",
+      "research-institute": "Institutos de investigación"
+    }
+  },
+  "about": {
+    "fallbackTitle": "Acerca de",
+    "headline": "Investigación aplicada con impacto real",
+    "leadFallback": "Un centro de investigación y desarrollo enfocado en soluciones de alto impacto para la industria, el gobierno y la sociedad.",
+    "navAria": "Secciones de la página Acerca de",
+    "nav": {
+      "history": "Historia",
+      "mission": "Misión",
+      "infrastructure": "Infraestructura",
+      "affiliation": "Vinculación con la UFMA",
+      "location": "Ubicación"
+    },
+    "historyKicker": "Nuestra trayectoria",
+    "historyTitle": "Historia y misión",
+    "timeline": [
+      {
+        "year": "2008",
+        "title": "Creación",
+        "text": "El Núcleo de Computação Aplicada se creó en la UFMA para impulsar la investigación y el desarrollo computacional aplicado."
+      },
+      {
+        "year": "2012",
+        "title": "Inauguración formal",
+        "text": "La inauguración formal integró a la UFMA en una red nacional de computación científica y visualización."
+      },
+      {
+        "year": "Hoy",
+        "title": "Impacto aplicado",
+        "text": "El NCA reúne a investigadores y estudiantes para desarrollar soluciones para la industria, el gobierno, la salud y la sociedad."
+      }
+    ],
+    "missionKicker": "Cómo trabajamos",
+    "missionTitle": "Pilares de la misión",
+    "mission": [
+      {
+        "title": "Investigación aplicada",
+        "text": "Transformar la ciencia de la computación en soluciones para desafíos socioeconómicos e industriales reales."
+      },
+      {
+        "title": "Recursos humanos",
+        "text": "Formar investigadores y estudiantes de doctorado, maestría y grado en proyectos de alto impacto."
+      },
+      {
+        "title": "Transferencia de tecnología",
+        "text": "Conectar la investigación académica con la industria, el gobierno, las universidades y las instituciones públicas."
+      },
+      {
+        "title": "Impacto regional",
+        "text": "Abordar desafíos locales manteniendo la colaboración científica nacional e internacional."
+      }
+    ],
+    "infraKicker": "Infraestructura de cómputo",
+    "infraTitle": "Preparada para investigación avanzada",
+    "infraFeaturedStat": "10",
+    "infraFeaturedTitle": "Servidores con GPU",
+    "infraFeaturedText": "Infraestructura dedicada al procesamiento de modelos de aprendizaje profundo y a la investigación computacional.",
+    "infraGpuLabel": "Memoria de GPU",
+    "infraGpuTitle": "12–24 GB por GPU",
+    "infraGpuText": "Series NVIDIA RTX 3090, 4090, 5080, 3060 y 4060 Ti.",
+    "infraMemoryLabel": "Memoria y almacenamiento",
+    "infraMemoryTitle": "32–128 GB de RAM",
+    "infraMemoryText": "Almacenamiento local de 1 a 5 TB por servidor.",
+    "infraCapacityLabel": "Capacidad de aplicación",
+    "infraCapacityTitle": "14 TB de disco",
+    "infraCapacityText": "Almacenamiento dedicado a aplicaciones y dos servidores de red y aplicación.",
+    "affiliationKicker": "Vinculación institucional",
+    "affiliationTitle": "Ecosistema de posgrado de la UFMA",
+    "affiliationLead": "Los investigadores del NCA están vinculados a las coordinaciones de Ciencia de la Computación e Ingeniería Eléctrica de la UFMA y participan en tres programas de posgrado acreditados por CAPES.",
+    "programs": [
+      {
+        "code": "PPGCC",
+        "title": "Ciencia de la Computación",
+        "text": "Programa de Posgrado en Ciencia de la Computación — nivel de maestría."
+      },
+      {
+        "code": "PPGEE",
+        "title": "Ingeniería Eléctrica",
+        "text": "Programa de Posgrado en Ingeniería Eléctrica — niveles de maestría y doctorado."
+      },
+      {
+        "code": "DCCMAPI",
+        "title": "Doctorado UFMA/UFPI",
+        "text": "Programa de Doctorado en Ciencia de la Computación en asociación con la UFPI."
+      }
+    ],
+    "locationKicker": "Visítanos",
+    "locationTitle": "Ubicación",
+    "address": [
+      "Laboratorio NCA, Edificio CCET",
+      "Av. dos Portugueses, 1966",
+      "Vila Bacanga, São Luís - MA",
+      "Brasil, 65080-805"
+    ],
+    "openMaps": "Abrir en Google Maps",
+    "mapTitle": "Ubicación de NCA-UFMA"
+  }
+}

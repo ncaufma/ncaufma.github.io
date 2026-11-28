@@ -1,0 +1,95 @@
+---
+import { ui } from '../i18n';
+
+interface Props {
+  lang: 'en' | 'pt' | 'es';
+}
+
+const { lang } = Astro.props;
+const copy = ui[lang];
+const currentPath = Astro.url.pathname.replace(/^\/(?:en|pt|es)(?=\/|$)/, '');
+const suffix = currentPath === '' ? '/' : currentPath;
+const languages = [
+  { code: 'en', label: 'EN', name: 'English' },
+  { code: 'pt', label: 'PT', name: 'Português' },
+  { code: 'es', label: 'ES', name: 'Español' },
+] as const;
+---
+
+<div class="language-switcher" role="group" aria-label={copy.nav.language}>
+  {languages.map(language => (
+    <a
+      href={`/${language.code}${suffix}`}
+      class:list={['language-option', { active: language.code === lang }]}
+      data-language={language.code}
+      lang={language.code}
+      aria-label={language.name}
+      aria-current={language.code === lang ? 'page' : undefined}
+      aria-pressed={language.code === lang ? 'true' : 'false'}
+    >
+      {language.label}
+    </a>
+  ))}
+</div>
+
+<script>
+  const switcher = document.querySelector('.language-switcher');
+
+  switcher?.querySelectorAll<HTMLAnchorElement>('[data-language]').forEach(link => {
+    link.addEventListener('click', () => {
+      const language = link.dataset.language;
+      if (!language) return;
+
+      try {
+        localStorage.setItem('nca-language', language);
+      } catch {
+        // Storage may be unavailable; the link navigation still works.
+      }
+    });
+  });
+</script>
+
+<style>
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-bg);
+}
+
+.language-option {
+  min-width: 38px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.language-option:hover {
+  color: var(--color-primary);
+  background: rgba(35, 70, 229, 0.06);
+}
+
+.language-option:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.language-option.active {
+  color: #fff;
+  background: var(--color-primary);
+}
+
+</style>

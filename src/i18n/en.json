@@ -1,0 +1,315 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "team": "Team",
+    "research": "Research",
+    "projects": "Projects",
+    "publications": "Publications",
+    "partners": "Partners",
+    "homeAria": "NCA-UFMA — Home page",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": "Language"
+  },
+  "footer": {
+    "tagline": "Applied Computing Group · Federal University of Maranhão",
+    "maps": "View on Google Maps",
+    "address": [
+      "NCA Lab, CCET Building",
+      "Av. dos Portugueses, 1966",
+      "Vila Bacanga, São Luís - MA, Brazil, 65080-805"
+    ]
+  },
+  "layout": {
+    "skip": "Skip to content",
+    "defaultDescription": "NCA-UFMA — Applied Computing Group.",
+    "backToTop": "Back to top"
+  },
+  "hero": {
+    "title": "Applied Computer Group",
+    "tagline": "Applying computing for the development of society, developing innovative solutions.",
+    "leadBefore": "is a research group at the",
+    "leadLink": "Federal University of Maranhão, Brazil",
+    "leadAfter": "dedicated to advancing Artificial Intelligence, Computer Vision, Medical Imaging, Virtual Reality, Natural Language Processing, and Optimization to create high-impact solutions for society.",
+    "eyebrow": "Applied Computing · UFMA",
+    "headline": "Computing applied to real-world impact.",
+    "summary": "NCA-UFMA develops research and technological solutions in artificial intelligence, computer vision, natural language processing, immersive realities, software engineering, and optimization.",
+    "exploreProjects": "Explore projects",
+    "viewAreas": "View research areas",
+    "areasAria": "NCA-UFMA research areas"
+  },
+  "cards": {
+    "active": "Active",
+    "concluded": "Concluded",
+    "paused": "Paused",
+    "featured": "Featured",
+    "seeDetails": "See details",
+    "seeMore": "See more",
+    "project": "project",
+    "projects": "projects",
+    "publication": "pub."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "lead": "The page you are looking for does not exist or has been moved.",
+    "home": "Go home",
+    "projects": "See projects"
+  },
+  "roles": {
+    "Principal Investigator": "Principal Investigator",
+    "Postdoc": "Postdoc",
+    "Visiting Scholar": "Visiting Scholar",
+    "PhD Student": "PhD Student",
+    "Masters Student": "Masters Student",
+    "Undergraduate": "Undergraduate",
+    "Staff": "Staff"
+  },
+  "home": {
+    "description": "Applied Computing Group — Federal University of Maranhão. Research in AI, Computer Vision, Medical Imaging, VR/AR, NLP, and Optimization.",
+    "statsAria": "NCA-UFMA at a glance",
+    "projects": "Projects",
+    "researchAreas": "Research areas",
+    "researchers": "Researchers",
+    "partners": "Partners",
+    "researchKicker": "What we research",
+    "researchTitle": "Research areas",
+    "exploreAreas": "Explore all areas →",
+    "selectedWork": "Selected work",
+    "featuredProjects": "Featured projects",
+    "viewProjects": "View all projects →",
+    "collaborationNetwork": "Collaboration network",
+    "meetPartners": "Meet our partners →",
+    "workWith": "Work with NCA-UFMA",
+    "ctaTitle": "Turn applied research into real solutions.",
+    "aboutCta": "About NCA-UFMA"
+  },
+  "team": {
+    "pageTitle": "Team",
+    "description": "NCA-UFMA team.",
+    "kicker": "People at NCA-UFMA",
+    "heading": "Meet the team",
+    "lead": "Researchers, postdocs and students working across applied computing, industry and society.",
+    "exploreAreas": "Explore research areas",
+    "statsAria": "Team statistics",
+    "stats": {
+      "active": "Active members",
+      "pi": "Principal investigators",
+      "postdocsPhd": "Postdocs and doctoral researchers",
+      "alumni": "Alumni"
+    },
+    "filtersAria": "Filter team members",
+    "filters": {
+      "all": "All",
+      "pi": "Principal investigators",
+      "postdocs": "Postdocs",
+      "phd": "Ph.D.",
+      "masters": "Master",
+      "undergrads": "Undergraduate",
+      "staff": "Staff",
+      "alumni": "Alumni"
+    },
+    "groups": {
+      "pi": "Principal Investigators",
+      "postdocs": "Postdoctoral / Visiting Scholars",
+      "phd": "PhD Students",
+      "masters": "Master Students",
+      "undergrads": "Undergraduate Students",
+      "staff": "Staff"
+    },
+    "ranks": {
+      "full": "Full professors",
+      "associate": "Associate professors",
+      "assistant": "Assistant professors",
+      "assistente": "Assistant professors",
+      "other": "Other"
+    },
+    "railHint": "Swipe sideways to browse members",
+    "alumniGroups": {
+      "postdocs": "Postdocs",
+      "phd": "Ph.D. Students",
+      "masters": "Master Students",
+      "undergrads": "Undergraduate Students"
+    },
+    "alumni": "Alumni",
+    "backToTeam": "← Back to team",
+    "photoAlt": "Photo of {name}",
+    "academicProfile": "Academic profile",
+    "academicSummary": "Academic summary",
+    "academicPosition": "Academic position",
+    "roleAt": "Role at NCA-UFMA",
+    "researchLines": "Research lines",
+    "researchLinesHeading": "Research Lines",
+    "highlights": "Highlights",
+    "associatedProjects": "Associated Projects",
+    "fallbackTitle": "Team"
+  },
+  "projects": {
+    "pageTitle": "Projects",
+    "description": "NCA-UFMA project portfolio.",
+    "lead": "{count} projects developed in partnership with companies, government agencies, and national and international universities.",
+    "filtersAria": "Filter projects",
+    "all": "All",
+    "active": "Active",
+    "concluded": "Concluded",
+    "noResults": "No projects found for this filter.",
+    "back": "← Projects",
+    "highlights": "Highlights",
+    "info": "Project Info",
+    "partner": "Partner",
+    "funding": "Funding",
+    "start": "Start",
+    "end": "End",
+    "status": "Status",
+    "team": "Team",
+    "tags": "Tags",
+    "video": "Video: {title}",
+    "fallbackTitle": "Project"
+  },
+  "researchAreas": {
+    "pageTitle": "Research Areas",
+    "description": "NCA-UFMA research areas.",
+    "lead": "Research lines combining scientific rigor and social impact.",
+    "back": "← Research Areas",
+    "fallbackTitle": "Research Area",
+    "appliedWork": "Applied work",
+    "projectsInArea": "Projects in this Area",
+    "scientificOutput": "Scientific output",
+    "selectedPublications": "Selected Publications"
+  },
+  "publications": {
+    "pageTitle": "Publications",
+    "description": "NCA-UFMA scientific publications",
+    "lead": "{count} papers published in journals, conferences, and books.",
+    "year": "Year",
+    "allYears": "All years",
+    "type": "Type",
+    "allTypes": "All types",
+    "empty": "No publications registered yet.",
+    "noResults": "No publications found for the selected filters.",
+    "types": {
+      "journal": "Journal",
+      "conference": "Conference",
+      "book-chapter": "Book Chapter",
+      "thesis": "Thesis/Dissertation",
+      "preprint": "Preprint",
+      "other": "Other"
+    }
+  },
+  "collaborations": {
+    "pageTitle": "Partners",
+    "description": "NCA-UFMA collaborators and partners",
+    "heading": "Partners & Collaborators",
+    "lead": "A collaboration network spanning universities, industrial companies, and government agencies in Brazil and abroad.",
+    "logoAlt": "Logo {name}",
+    "flipShowFormer": "Show former name",
+    "flipShowCurrent": "Show current name",
+    "expandShowAbsorbed": "Show absorbed brands",
+    "expandHideAbsorbed": "Hide absorbed brands",
+    "absorbedLabel": "Absorbed brands",
+    "expandShowFullName": "Show full name",
+    "expandShowShortName": "Show abbreviation",
+    "groups": {
+      "university": "Universities & Research Institutes",
+      "company": "Companies & Industry",
+      "government": "Government Agencies",
+      "research-institute": "Research Institutes"
+    }
+  },
+  "about": {
+    "fallbackTitle": "About",
+    "headline": "Applied research for real impact",
+    "leadFallback": "A research and development center focused on high-impact solutions for industry, government, and society.",
+    "navAria": "About page sections",
+    "nav": {
+      "history": "History",
+      "mission": "Mission",
+      "infrastructure": "Infrastructure",
+      "affiliation": "UFMA affiliation",
+      "location": "Location"
+    },
+    "historyKicker": "Our trajectory",
+    "historyTitle": "History and mission",
+    "timeline": [
+      {
+        "year": "2008",
+        "title": "Established",
+        "text": "The Center for Applied Computing was established at UFMA to advance applied computational research and development."
+      },
+      {
+        "year": "2012",
+        "title": "Formal inauguration",
+        "text": "The formal inauguration integrated UFMA into a national network of scientific computing and visualization."
+      },
+      {
+        "year": "Today",
+        "title": "Applied impact",
+        "text": "NCA brings together researchers and students to develop solutions for industry, government, healthcare, and society."
+      }
+    ],
+    "missionKicker": "How we work",
+    "missionTitle": "Mission pillars",
+    "mission": [
+      {
+        "title": "Applied research",
+        "text": "Transform computational science into solutions for real socioeconomic and industrial challenges."
+      },
+      {
+        "title": "Human resources",
+        "text": "Train researchers, doctoral, master's and undergraduate students in high-impact projects."
+      },
+      {
+        "title": "Technology transfer",
+        "text": "Connect academic research with industry, government, universities and public institutions."
+      },
+      {
+        "title": "Regional impact",
+        "text": "Address local challenges while maintaining national and international scientific collaboration."
+      }
+    ],
+    "infraKicker": "Computing infrastructure",
+    "infraTitle": "Built for advanced research",
+    "infraFeaturedStat": "10",
+    "infraFeaturedTitle": "GPU-equipped servers",
+    "infraFeaturedText": "Dedicated infrastructure for deep-learning model processing and computational research.",
+    "infraGpuLabel": "GPU memory",
+    "infraGpuTitle": "12–24 GB per GPU",
+    "infraGpuText": "NVIDIA RTX 3090, 4090, 5080, 3060 and 4060 Ti series.",
+    "infraMemoryLabel": "Memory and storage",
+    "infraMemoryTitle": "32–128 GB RAM",
+    "infraMemoryText": "Local storage ranging from 1 to 5 TB per server.",
+    "infraCapacityLabel": "Application capacity",
+    "infraCapacityTitle": "14 TB of disk",
+    "infraCapacityText": "Dedicated application storage and two network/application servers.",
+    "affiliationKicker": "Institutional affiliation",
+    "affiliationTitle": "UFMA graduate ecosystem",
+    "affiliationLead": "NCA researchers are affiliated with UFMA's Computer Science and Electrical Engineering coordinations and actively participate in three CAPES-accredited graduate programs.",
+    "programs": [
+      {
+        "code": "PPGCC",
+        "title": "Computer Science",
+        "text": "Graduate Program in Computer Science — Master's level."
+      },
+      {
+        "code": "PPGEE",
+        "title": "Electrical Engineering",
+        "text": "Graduate Program in Electrical Engineering — Master's and Doctoral levels."
+      },
+      {
+        "code": "DCCMAPI",
+        "title": "UFMA/UFPI Doctorate",
+        "text": "Joint Doctoral Program in Computer Science with UFPI."
+      }
+    ],
+    "locationKicker": "Visit us",
+    "locationTitle": "Location",
+    "address": [
+      "NCA Lab, CCET Building",
+      "Av. dos Portugueses, 1966",
+      "Vila Bacanga, São Luís - MA",
+      "Brazil, 65080-805"
+    ],
+    "openMaps": "Open in Google Maps",
+    "mapTitle": "NCA-UFMA location"
+  }
+}
