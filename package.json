@@ -12,12 +12,15 @@
     "sync:scholar": "node scripts/fetch-scholar.mjs --sync",
     "sync:scholar:dry": "node scripts/fetch-scholar.mjs --sync --dry-run",
     "reclassify:pubs": "node scripts/reclassify-pubs.mjs",
+    "reclassify:research": "node scripts/reclassify-research-areas.mjs",
     "update:scholar:members": "node scripts/fetch-scholar-members.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.7",
     "@astrojs/sitemap": "^3.1.6",
+    "@iconify-json/mdi": "^1.2.3",
     "astro": "^4.16.0",
+    "astro-icon": "^1.2.0",
     "sharp": "^0.33.5",
     "zod": "^4.3.6"
   },
