@@ -1,4 +1,5 @@
 ---
+import { ui } from '../../i18n';
 interface Props {
   title: string;
   partner?: string;
@@ -7,18 +8,25 @@ interface Props {
   researchArea?: string;
   highlights?: string[];
   slug: string;
+  lang?: 'en' | 'pt' | 'es';
   featured?: boolean;
   index?: number;
 }
-const { title, partner, status, description, highlights = [], slug, featured = false, index = 0 } = Astro.props;
-const statusLabel: Record<string, string> = { active: 'Active', concluded: 'Concluded', paused: 'Paused' };
+const { title, partner, status, description, highlights = [], slug, lang = 'en', featured = false, index = 0 } = Astro.props;
 const statusClass: Record<string, string> = { active: 'tag-accent', concluded: 'tag-neutral', paused: 'tag-secondary' };
+const projectHref = `/${lang}/projects/${slug}`;
+const copy = ui[lang].cards;
+const statusLabel: Record<string, string> = {
+  active: copy.active,
+  concluded: copy.concluded,
+  paused: copy.paused,
+};
 ---
 <article class:list={['project-card reveal', { 'project-card--featured': featured }]} style={`animation-delay: ${index * 0.08}s`}>
   <header class="project-card-header">
     <div class="project-card-meta">
       <span class:list={['tag', statusClass[status] ?? 'tag-neutral']}>{statusLabel[status] ?? status}</span>
-      {featured && <span class="tag tag-primary">Featured</span>}
+      {featured && <span class="tag tag-primary">{copy.featured}</span>}
     </div>
     <h3 class="project-title">{title}</h3>
     {partner && <p class="project-partner">{partner}</p>}
@@ -34,7 +42,7 @@ const statusClass: Record<string, string> = { active: 'tag-accent', concluded: '
     </ul>
   )}
 
-  <a href={`/projects/${slug}`} class="project-link">See details →</a>
+  <a href={projectHref} class="project-link">{copy.seeDetails} →</a>
 </article>
 
 <style>

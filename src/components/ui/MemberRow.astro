@@ -244,8 +244,12 @@ const initials = name.split(' ').map(w => w[0]).filter(Boolean).slice(0, 2).join
 }
 .member-highlights li :global(a):hover { text-decoration: underline; }
 
-@media (max-width: 540px) {
-  .member-row { grid-template-columns: 96px 1fr; gap: var(--space-4); }
+@media (max-width: 600px) {
+  .member-row {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: var(--space-4);
+  }
   .member-photo-link { width: 96px; height: 96px; }
   .member-name { font-size: 1.125rem; }
 }

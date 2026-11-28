@@ -1,36 +1,40 @@
 ---
+import { ui } from '../../i18n';
+import { Icon } from 'astro-icon/components';
 interface Props {
   title: string;
   summary: string;
   slug: string;
+  lang?: 'en' | 'pt' | 'es';
   color?: string;
   projectCount?: number;
   publicationCount?: number;
   index?: number;
 }
-const { title, summary, slug, color = 'var(--color-primary)', projectCount = 0, publicationCount = 0, index = 0 } = Astro.props;
+const { title, summary, slug, lang = 'en', color = 'var(--color-primary)', projectCount = 0, publicationCount = 0, index = 0 } = Astro.props;
 
 const icons: Record<string, string> = {
-  'ai-data-science': '🧠',
-  'virtual-augmented-reality': '🥽',
-  'computer-vision-medical-imaging': '👁️',
-  'natural-language-processing': '💬',
-  'software-engineering-ux': '⚙️',
-  'logistics-optimization': '📦',
+  'ai-data-science': 'mdi:brain',
+  'virtual-augmented-reality': 'mdi:virtual-reality',
+  'computer-vision-medical-imaging': 'mdi:eye-outline',
+  'natural-language-processing': 'mdi:chat-processing-outline',
+  'software-engineering-ux': 'mdi:code-tags',
+  'logistics-optimization': 'mdi:chart-box-outline',
 };
 const icon = icons[slug] ?? '🔬';
+const copy = ui[lang].cards;
 ---
-<a href={`/research-areas/${slug}`} class="area-card reveal" style={`--card-color: ${color}; animation-delay: ${index * 0.08}s`}>
+<a href={`/${lang}/research-areas/${slug}`} class="area-card reveal" style={`--card-color: ${color}; animation-delay: ${index * 0.08}s`}>
   <div class="area-card-top">
-    <span class="area-icon" aria-hidden="true">{icon}</span>
+    <span class="area-icon" aria-hidden="true"><Icon name={icon} size={32} /></span>
     <div class="area-meta">
-      {projectCount > 0 && <span class="area-badge">{projectCount} project{projectCount !== 1 ? 's' : ''}</span>}
-      {publicationCount > 0 && <span class="area-badge area-badge--light">{publicationCount} pub.</span>}
+      {projectCount > 0 && <span class="area-badge">{projectCount} {projectCount !== 1 ? copy.projects : copy.project}</span>}
+      {publicationCount > 0 && <span class="area-badge area-badge--light">{publicationCount} {copy.publication}</span>}
     </div>
   </div>
   <h3 class="area-title">{title}</h3>
   <p class="area-summary">{summary}</p>
-  <span class="area-cta">See more →</span>
+  <span class="area-cta">{copy.seeMore} →</span>
 </a>
 
 <style>
@@ -76,6 +80,14 @@ const icon = icons[slug] ?? '🔬';
 .area-icon {
   font-size: 2rem;
   line-height: 1;
+  display: block;
+  width: 32px;
+  height: 32px;
+  color: var(--card-color);
+}
+.area-icon svg {
+  width: 32px;
+  height: 32px;
   display: block;
 }
 

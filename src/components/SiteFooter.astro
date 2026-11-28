@@ -1,11 +1,11 @@
 ---
 import ColorBar from './ui/ColorBar.astro';
+import { ui } from '../i18n';
+interface Props { lang?: 'en' | 'pt' | 'es'; }
+const { lang = 'en' } = Astro.props;
+const copy = ui[lang];
 
-const addressLines = [
-  "NCA Lab, CCET Building",
-  "Av. dos Portugueses, 1966",
-  "Vila Bacanga, São Luís - MA, Brazil, 65080-805"
-];
+const addressLines = copy.footer.address;
 const mapsUrl = "https://www.google.com/maps/place/N%C3%BAcleo+de+computa%C3%A7%C3%A3o+Aplicada+UFMA/@-2.5588115,-44.3100921,17z";
 ---
 <footer class="site-footer">
@@ -17,13 +17,13 @@ const mapsUrl = "https://www.google.com/maps/place/N%C3%BAcleo+de+computa%C3%A7%
         <span class="logo-mark">NCA</span>
         <span class="logo-sub">UFMA</span>
       </div>
-      <p class="footer-tagline">Applied Computing Group · Federal University of Maranhão</p>
+      <p class="footer-tagline">{copy.footer.tagline}</p>
     </div>
 
     <address class="footer-address">
       {addressLines.map(line => <span>{line}</span>)}
       <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="footer-map-link">
-        View on Google Maps →
+        {copy.footer.maps} →
       </a>
     </address>
 
@@ -95,7 +95,7 @@ const mapsUrl = "https://www.google.com/maps/place/N%C3%BAcleo+de+computa%C3%A7%
 }
 .footer-map-link:hover { color: #fff; }
 
-@media (max-width: 720px) {
+@media (max-width: 600px) {
   .footer-inner {
     flex-direction: column;
     align-items: flex-start;

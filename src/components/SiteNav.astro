@@ -1,34 +1,61 @@
 ---
 import ColorBar from './ui/ColorBar.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { ui } from '../i18n';
+interface Props {
+  lang?: 'en' | 'pt' | 'es';
+}
+const { lang = 'en' } = Astro.props;
+const prefix = `/${lang}`;
+const copy = ui[lang];
 const navLinks = [
-  { href: '/',              label: 'Home' },
-  { href: '/about',         label: 'About' },
-  { href: '/team',          label: 'Team' },
-  { href: '/research-areas',label: 'Research' },
-  { href: '/projects',      label: 'Projects' },
-  { href: '/publications',  label: 'Publications' },
-  { href: '/collaborations',label: 'Partners' },
+  { href: `${prefix}/`,              label: copy.nav.home },
+  { href: `${prefix}/about`,         label: copy.nav.about },
+  { href: `${prefix}/team`,          label: copy.nav.team },
+  { href: `${prefix}/research-areas`,label: copy.nav.research },
+  { href: `${prefix}/projects`,      label: copy.nav.projects },
+  { href: `${prefix}/publications`,  label: copy.nav.publications },
+  { href: `${prefix}/collaborations`,label: copy.nav.partners },
 ];
 const currentPath = new URL(Astro.request.url).pathname;
 ---
 <header class="site-header">
   <nav class="nav-inner container">
-    <a href="/" class="nav-logo" aria-label="NCA-UFMA — Home page">
+    <a href={prefix} class="nav-logo" aria-label={copy.nav.homeAria}>
       <span class="nav-logo-mark">NCA</span>
       <span class="nav-logo-divider" aria-hidden="true">|</span>
       <span class="nav-logo-sub">UFMA</span>
     </a>
 
-    <button class="nav-toggle" id="nav-toggle" aria-controls="nav-links" aria-expanded="false" aria-label="Open menu">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="nav-actions">
+      <LanguageSwitcher lang={lang} />
+      <button
+        class="nav-toggle"
+        id="nav-toggle"
+        aria-controls="nav-links"
+        aria-expanded="false"
+        aria-label={copy.nav.openMenu}
+        data-label-open={copy.nav.openMenu}
+        data-label-close={copy.nav.closeMenu}
+      >
+        <span></span><span></span><span></span>
+      </button>
+    </div>
 
     <ul class="nav-links" id="nav-links" role="list">
       {navLinks.map(({ href, label }) => (
         <li>
           <a
             href={href}
-            class:list={['nav-link', { active: currentPath === href || (href !== '/' && currentPath.startsWith(href)) }]}
+            class:list={[
+              'nav-link',
+              {
+                active:
+                  href === `${prefix}/`
+                    ? currentPath === `${prefix}/`
+                    : currentPath === href || currentPath.startsWith(`${href}/`),
+              },
+            ]}
           >
             {label}
           </a>
@@ -40,20 +67,66 @@ const currentPath = new URL(Astro.request.url).pathname;
 </header>
 
 <script>
-  const toggle = document.getElementById('nav-toggle')!;
-  const links  = document.getElementById('nav-links')!;
-  toggle.addEventListener('click', () => {
-    const open = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!open));
-    links.classList.toggle('open', !open);
+  const toggle = document.getElementById('nav-toggle') as HTMLButtonElement;
+  const links = document.getElementById('nav-links') as HTMLElement;
+  const header = document.querySelector('.site-header') as HTMLElement;
+  const labelOpen = toggle.dataset.labelOpen ?? 'Open menu';
+  const labelClose = toggle.dataset.labelClose ?? 'Close menu';
+  const navMq = window.matchMedia('(max-width: 1100px)');
+
+  function isMobileNav() {
+    return navMq.matches;
+  }
+
+  function setOpen(open: boolean) {
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? labelClose : labelOpen);
+    links.classList.toggle('open', open);
+    if (isMobileNav()) {
+      links.toggleAttribute('inert', !open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    } else {
+      links.removeAttribute('inert');
+      document.body.style.overflow = '';
+    }
+  }
+
+  function syncNavMode() {
+    if (!isMobileNav()) {
+      setOpen(false);
+      links.removeAttribute('inert');
+    } else if (toggle.getAttribute('aria-expanded') !== 'true') {
+      links.setAttribute('inert', '');
+    }
+  }
+
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
   });
-  // Close on link click (mobile)
-  links.querySelectorAll('a').forEach(a =>
+
+  links.querySelectorAll('a').forEach((a) =>
     a.addEventListener('click', () => {
-      toggle.setAttribute('aria-expanded', 'false');
-      links.classList.remove('open');
+      if (isMobileNav()) setOpen(false);
     })
   );
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (toggle.getAttribute('aria-expanded') !== 'true') return;
+    const target = e.target as Node;
+    if (header.contains(target)) return;
+    setOpen(false);
+  });
+
+  navMq.addEventListener('change', syncNavMode);
+  syncNavMode();
 </script>
 
 <style>
@@ -72,7 +145,15 @@ const currentPath = new URL(Astro.request.url).pathname;
   align-items: center;
   justify-content: space-between;
   height: 64px;
-  gap: var(--space-6);
+  gap: var(--space-4);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .nav-logo {
@@ -118,26 +199,52 @@ const currentPath = new URL(Astro.request.url).pathname;
 
 .nav-toggle {
   display: none;
-  flex-direction: column;
-  gap: 5px;
-  padding: 8px;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   cursor: pointer;
   background: none;
   border: none;
 }
 .nav-toggle span {
+  position: absolute;
   display: block;
   width: 22px;
   height: 2px;
   background: var(--color-text);
   border-radius: 2px;
-  transition: all var(--transition-base);
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+.nav-toggle span:nth-child(1) { transform: translateY(-7px); }
+.nav-toggle span:nth-child(2) { transform: translateY(0); }
+.nav-toggle span:nth-child(3) { transform: translateY(7px); }
+.nav-toggle[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(0) rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(0) rotate(-45deg);
 }
 
-@media (max-width: 900px) {
+/* Hamburger below --bp-nav (1100). Literals required in @media. */
+@media (max-width: 1100px) {
   .nav-toggle { display: flex; }
 
+  .nav-inner {
+    flex-wrap: wrap;
+  }
+
+  .nav-actions {
+    order: 2;
+  }
+
   .nav-links {
+    order: 3;
     position: fixed;
     top: 72px;
     left: 0; right: 0;
@@ -151,15 +258,32 @@ const currentPath = new URL(Astro.request.url).pathname;
     transform: translateY(-110%);
     transition: transform var(--transition-slow);
     pointer-events: none;
+    visibility: hidden;
   }
   .nav-links.open {
     transform: translateY(0);
     pointer-events: auto;
+    visibility: visible;
   }
   .nav-link {
     padding: 0.75rem 1rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
     border-radius: var(--radius-md);
     font-size: 1rem;
+  }
+}
+
+@media (min-width: 1101px) {
+  .nav-actions {
+    order: 3;
+    margin-left: var(--space-3);
+  }
+
+  .nav-links {
+    order: 2;
+    margin-left: auto;
   }
 }
 </style>

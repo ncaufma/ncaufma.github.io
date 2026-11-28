@@ -63,6 +63,15 @@
   /* Layout */
   --container-max: 1280px;
   --container-wide: 1440px;
+
+  /*
+   * Breakpoints (document only — use literals in @media):
+   *   sm 600 | md 900 | lg 980 | nav 1100
+   */
+  --bp-sm: 600px;
+  --bp-md: 900px;
+  --bp-lg: 980px;
+  --bp-nav: 1100px;
 }
 
 /* ── Reset & Base ─────────────────────────────────────────── */
@@ -84,7 +93,14 @@ body {
   color: var(--color-text);
   background: var(--color-bg);
   line-height: 1.65;
-  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body > main,
+#main-content {
+  flex: 1 0 auto;
 }
 
 img, video { max-width: 100%; height: auto; display: block; }
@@ -294,16 +310,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── Grid utilities ───────────────────────────────────────── */
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-6); }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+.grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-6); }
 
-@media (max-width: 1024px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 900px) {
+  .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 640px) {
-  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+@media (max-width: 600px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ── Divider ──────────────────────────────────────────────── */
@@ -464,7 +480,7 @@ h1, h2, h3, h4, h5, h6 {
 .relative { position: relative; }
 .overflow-hidden { overflow: hidden; }
 
-/* ── Responsive nav ───────────────────────────────────────── */
-@media (max-width: 768px) {
+/* ── Responsive sections ──────────────────────────────────── */
+@media (max-width: 600px) {
   .section { padding-block: var(--space-8); }
 }
