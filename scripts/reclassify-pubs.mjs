@@ -1,7 +1,7 @@
 /**
  * scripts/reclassify-pubs.mjs
  *
- * Walks every .md file in src/content/publications/ and updates its
+ * Walks every .md file in src/content/publications/<lang>/ and updates its
  * `type:` frontmatter field using the shared classifier in classify-venue.mjs.
  *
  * Usage:
@@ -14,7 +14,13 @@ import { fileURLToPath } from 'url';
 import { classifyVenue } from './classify-venue.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PUB_DIR   = join(__dirname, '..', 'src', 'content', 'publications');
+const langIdx = process.argv.indexOf('--lang');
+const LANG = langIdx >= 0 ? process.argv[langIdx + 1] : 'en';
+if (!['en', 'pt', 'es'].includes(LANG)) {
+  console.error('[reclassify] --lang must be en, pt, or es.');
+  process.exit(1);
+}
+const PUB_DIR   = join(__dirname, '..', 'src', 'content', 'publications', LANG);
 
 const files = readdirSync(PUB_DIR).filter(f => f.endsWith('.md'));
 console.log(`[reclassify] Scanning ${files.length} files in ${PUB_DIR}`);

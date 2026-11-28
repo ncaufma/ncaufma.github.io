@@ -2,7 +2,7 @@
  * scripts/fetch-scholar.mjs
  *
  * Fetches publications from a Google Scholar group/author profile page
- * and writes each publication as a Markdown file to content/publications/.
+ * and writes each publication as a Markdown file to src/content/publications/<lang>/.
  *
  * Usage:
  *   npm run update:scholar
@@ -22,7 +22,13 @@ import { classifyVenue } from './classify-venue.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
-const OUTPUT_DIR = join(ROOT, 'src', 'content', 'publications');
+const langIdx = process.argv.indexOf('--lang');
+const LANG = langIdx >= 0 ? process.argv[langIdx + 1] : 'en';
+if (!['en', 'pt', 'es'].includes(LANG)) {
+  console.error('[fetch-scholar] --lang must be en, pt, or es.');
+  process.exit(1);
+}
+const OUTPUT_DIR = join(ROOT, 'src', 'content', 'publications', LANG);
 
 // ── CLI flags ─────────────────────────────────────────────────
 // --sync     : also DELETE files that no longer appear in Scholar
@@ -38,7 +44,7 @@ let scholarUrl = process.env.SCHOLAR_URL;
 
 if (!scholarUrl) {
   // Try to read from content/settings/site.yaml
-  const settingsPath = join(ROOT, 'content', 'settings', 'site.yaml');
+  const settingsPath = join(ROOT, 'src', 'content', 'settings', LANG, 'site.yaml');
   if (existsSync(settingsPath)) {
     const yaml = readFileSync(settingsPath, 'utf-8');
     const match = yaml.match(/googleScholarGroupUrl:\s*["']?([^"'\n\[]+)["']?/);
@@ -189,6 +195,7 @@ for (const pub of publications) {
     : '';
 
   const content = `---
+lang: "${LANG}"
 title: "${pub.title.replace(/"/g, '\\"')}"
 authors:
 ${authorsList || '  - "[REQUIRED: fill authors]"'}

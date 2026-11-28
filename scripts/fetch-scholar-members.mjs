@@ -1,7 +1,7 @@
 /**
  * scripts/fetch-scholar-members.mjs
  *
- * Iterates over every team member file in src/content/team/ that has a
+ * Iterates over every team member file in src/content/team/<lang>/ that has a
  * `googleScholar:` URL, fetches their personal publication list from Google
  * Scholar, and writes it to src/data/member-publications/{slug}.json.
  *
@@ -23,7 +23,13 @@ import { fetchScholarPublications } from './lib/scholar-fetch.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT       = join(__dirname, '..');
-const TEAM_DIR   = join(ROOT, 'src', 'content', 'team');
+const langIdx = process.argv.indexOf('--lang');
+const LANG = langIdx >= 0 ? process.argv[langIdx + 1] : 'en';
+if (!['en', 'pt', 'es'].includes(LANG)) {
+  console.error('[members-scholar] --lang must be en, pt, or es.');
+  process.exit(1);
+}
+const TEAM_DIR   = join(ROOT, 'src', 'content', 'team', LANG);
 const OUTPUT_DIR = join(ROOT, 'src', 'data', 'member-publications');
 
 const DRY_RUN = process.argv.includes('--dry-run');

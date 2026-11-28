@@ -23,7 +23,13 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
-const OUTPUT_DIR = join(ROOT, 'content', 'news');
+const langIdx = process.argv.indexOf('--lang');
+const LANG = langIdx >= 0 ? process.argv[langIdx + 1] : 'en';
+if (!['en', 'pt', 'es'].includes(LANG)) {
+  console.error('[fetch-instagram] --lang must be en, pt, or es.');
+  process.exit(1);
+}
+const OUTPUT_DIR = join(ROOT, 'src', 'content', 'news', LANG);
 
 const TOKEN = process.env.INSTAGRAM_TOKEN;
 
@@ -84,6 +90,7 @@ for (const post of posts) {
   const cover = post.media_url ?? post.thumbnail_url ?? '';
 
   const content = `---
+lang: "${LANG}"
 title: "Instagram: ${caption.slice(0, 80).replace(/\n/g, ' ')}…"
 date: "${date}"
 description: "${caption.replace(/\n/g, ' ').slice(0, 200)}"
