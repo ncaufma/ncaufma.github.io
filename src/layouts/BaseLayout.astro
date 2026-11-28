@@ -2,31 +2,37 @@
 import '../styles/global.css';
 import SiteNav from '../components/SiteNav.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import BackToTop from '../components/BackToTop.astro';
+import { ui } from '../i18n';
 
 interface Props {
   title: string;
   description?: string;
   image?: string;
   noindex?: boolean;
+  lang?: 'en' | 'pt' | 'es';
 }
 
 const {
   title,
-  description = 'NCA-UFMA — Applied Computing Group.',
-  image = '/assets/og-default.png',
+  description,
+  image = '/favicon.svg',
   noindex = false,
+  lang = 'en',
 } = Astro.props;
+const copy = ui[lang];
+const resolvedDescription = description ?? copy.layout.defaultDescription;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const fullTitle = title === 'NCA-UFMA' ? title : `${title} | NCA-UFMA`;
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{fullTitle}</title>
-  <meta name="description" content={description} />
+  <meta name="description" content={resolvedDescription} />
   <link rel="canonical" href={canonicalURL} />
   {noindex && <meta name="robots" content="noindex" />}
 
@@ -34,21 +40,17 @@ const fullTitle = title === 'NCA-UFMA' ? title : `${title} | NCA-UFMA`;
   <meta property="og:type" content="website" />
   <meta property="og:url" content={canonicalURL} />
   <meta property="og:title" content={fullTitle} />
-  <meta property="og:description" content={description} />
+  <meta property="og:description" content={resolvedDescription} />
   <meta property="og:image" content={new URL(image, Astro.site)} />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={fullTitle} />
-  <meta name="twitter:description" content={description} />
+  <meta name="twitter:description" content={resolvedDescription} />
   <meta name="twitter:image" content={new URL(image, Astro.site)} />
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  <link rel="icon" type="image/png" href="/favicon.png" />
-
-  <!-- RSS -->
-  <link rel="alternate" type="application/rss+xml" title="NCA-UFMA News" href="/rss.xml" />
 
   <!-- View Transitions -->
   <meta name="view-transition" content="same-origin" />
@@ -56,12 +58,13 @@ const fullTitle = title === 'NCA-UFMA' ? title : `${title} | NCA-UFMA`;
   <slot name="head" />
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
-  <SiteNav />
+  <a class="skip-link" href="#main-content">{copy.layout.skip}</a>
+  <SiteNav lang={lang} />
   <main id="main-content">
     <slot />
   </main>
-  <SiteFooter />
+  <SiteFooter lang={lang} />
+  <BackToTop lang={lang} label={copy.layout.backToTop} />
 
   <!-- Scroll reveal -->
   <script>
