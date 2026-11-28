@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ResearchAreaCard from '../../../components/ui/ResearchAreaCard.astro';
+import { getCollection } from 'astro:content';
+import { supportedLanguages, isLanguage, publicSlug, byLang, ui } from '../../../i18n';
+
+export function getStaticPaths() {
+  return supportedLanguages.map(lang => ({ params: { lang } }));
+}
+
+const lang = isLanguage(Astro.params.lang) ? Astro.params.lang : 'en';
+const copy = ui[lang].researchAreas;
+const areas = byLang(await getCollection('research-areas'), lang)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const projects = byLang(await getCollection('projects'), lang);
+const pubs = byLang(await getCollection('publications'), 'en');
+---
+
+<BaseLayout lang={lang} title={copy.pageTitle} description={copy.description}>
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="display-lg">{copy.pageTitle}</h1>
+      <p class="page-lead">{copy.lead}</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container grid-3">
+      {areas.map((area, index) => {
+        const slug = publicSlug(area.slug);
+        return (
+          <ResearchAreaCard
+            title={area.data.title}
+            summary={area.data.summary}
+            slug={slug}
+            lang={lang}
+            color={area.data.color}
+            projectCount={projects.filter(project => project.data.researchArea === slug).length}
+            publicationCount={pubs.filter(pub => pub.data.researchArea === slug).length}
+            index={index}
+          />
+        );
+      })}
+    </div>
+  </section>
+</BaseLayout>

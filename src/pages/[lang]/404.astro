@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { supportedLanguages, isLanguage, ui } from '../../i18n';
+
+export function getStaticPaths() {
+  return supportedLanguages.map(lang => ({ params: { lang } }));
+}
+
+const lang = isLanguage(Astro.params.lang) ? Astro.params.lang : 'en';
+const copy = ui[lang].notFound;
+---
+
+<BaseLayout lang={lang} title={copy.title} noindex={true}>
+  <div class="not-found">
+    <div class="container not-found-inner">
+      <div class="nf-code" aria-hidden="true">404</div>
+      <h1 class="nf-title">{copy.title}</h1>
+      <p class="nf-lead">{copy.lead}</p>
+      <div class="nf-actions">
+        <a href={`/${lang}/`} class="btn btn-primary">{copy.home}</a>
+        <a href={`/${lang}/projects/`} class="btn btn-ghost">{copy.projects}</a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

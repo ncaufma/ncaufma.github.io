@@ -3,7 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import TeamCard from '../../components/ui/TeamCard.astro';
 import { getCollection } from 'astro:content';
 
-const all = await getCollection('team');
+const all = (await getCollection('team')).filter(m => m.data.lang === 'en');
+const publicSlug = (slug: string) => slug.replace(/^en\//, '');
 
 const byOrder = (a, b) =>
   (a.data.order ?? 99) - (b.data.order ?? 99) || a.data.name.localeCompare(b.data.name);
@@ -64,7 +65,7 @@ const alumniGroups = [
               linkedin={m.data.linkedin}
               instagram={m.data.instagram}
               twitter={m.data.twitter}
-              slug={m.slug}
+              slug={publicSlug(m.slug)}
               index={i}
             />
           ))}
@@ -84,7 +85,7 @@ const alumniGroups = [
             <ul class="alumni-list">
               {group.items.map(m => (
                 <li class="alumni-item">
-                  <a href={`/team/${m.slug}`}>{m.data.name}</a>
+                  <a href={`/team/${publicSlug(m.slug)}`}>{m.data.name}</a>
                 </li>
               ))}
             </ul>

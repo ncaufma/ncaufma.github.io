@@ -3,16 +3,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, getEntry } from 'astro:content';
 
 export async function getStaticPaths() {
-  const team = await getCollection('team');
-  return team.map(member => ({ params: { slug: member.slug }, props: { member } }));
+  const team = (await getCollection('team')).filter(member => member.data.lang === 'en');
+  return team.map(member => ({
+    params: { slug: member.slug.replace(/^en\//, '') },
+    props: { member },
+  }));
 }
 
 const { member } = Astro.props;
 const { data } = member;
 const { Content } = await member.render();
 
-const allProjects = await getCollection('projects');
-const memberProjects = allProjects.filter(p => p.data.members?.includes(member.slug));
+const allProjects = (await getCollection('projects')).filter(p => p.data.lang === 'en');
+const memberSlug = member.slug.replace(/^en\//, '');
+const memberProjects = allProjects.filter(p => p.data.members?.includes(memberSlug));
 
 // ── Scholar publications ───────────────────────────────────────────
 // Fetched at build time by scripts/fetch-scholar-members.mjs and stored
@@ -39,7 +43,7 @@ const pubFiles = import.meta.glob<ScholarPayload>(
   '../../data/member-publications/*.json',
   { eager: true, import: 'default' },
 );
-const pubKey = Object.keys(pubFiles).find(k => k.endsWith(`/${member.slug}.json`));
+const pubKey = Object.keys(pubFiles).find(k => k.endsWith(`/${memberSlug}.json`));
 const scholarPayload: ScholarPayload | null = pubKey ? pubFiles[pubKey] : null;
 const scholarPubs: ScholarPub[] = scholarPayload?.publications ?? [];
 
@@ -182,7 +186,7 @@ const twitterUrl = hasTwitter
         <ul class="projects-list">
           {memberProjects.map(p => (
             <li>
-              <a href={`/projects/${p.slug}`} class="project-row">
+              <a href={`/projects/${p.slug.replace(/^en\//, '')}`} class="project-row">
                 <span class="project-row-title">{p.data.title}</span>
                 <span class:list={['tag', p.data.status === 'active' ? 'tag-accent' : 'tag-neutral']} style="font-size:0.7rem">
                   {p.data.status === 'active' ? 'Active' : 'Concluded'}

@@ -3,15 +3,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ProjectCard from '../../components/ui/ProjectCard.astro';
 import { getCollection } from 'astro:content';
 
-const projects = await getCollection('projects');
-const areas    = await getCollection('research-areas');
+const projects = (await getCollection('projects')).filter(p => p.data.lang === 'en');
+const areas    = (await getCollection('research-areas')).filter(a => a.data.lang === 'en');
+const publicSlug = (slug: string) => slug.replace(/^en\//, '');
 const sorted   = projects.sort((a, b) => {
   if (a.data.status === 'active' && b.data.status !== 'active') return -1;
   if (b.data.status === 'active' && a.data.status !== 'active') return 1;
   return a.data.title.localeCompare(b.data.title);
 });
 
-const areaMap: Record<string, string> = Object.fromEntries(areas.map(a => [a.slug, a.data.title]));
+const areaMap: Record<string, string> = Object.fromEntries(
+  areas.map(a => [publicSlug(a.slug), a.data.title]),
+);
 ---
 <BaseLayout title="Projects" description="NCA-UFMA project portfolio — partnerships with industry, government, and academia.">
 
@@ -36,9 +39,9 @@ const areaMap: Record<string, string> = Object.fromEntries(areas.map(a => [a.slu
           Concluded ({projects.filter(p => p.data.status === 'concluded').length})
         </button>
         {areas.map(a => (
-          <button class="filter-chip" data-filter={`area-${a.slug}`}>
+          <button class="filter-chip" data-filter={`area-${publicSlug(a.slug)}`}>
             {a.data.title.split(' ').slice(0, 2).join(' ')}
-            ({projects.filter(p => p.data.researchArea === a.slug).length})
+            ({projects.filter(p => p.data.researchArea === publicSlug(a.slug)).length})
           </button>
         ))}
       </div>
@@ -57,7 +60,7 @@ const areaMap: Record<string, string> = Object.fromEntries(areas.map(a => [a.slu
               status={p.data.status}
               description={p.data.description}
               highlights={p.data.highlights}
-              slug={p.slug}
+              slug={publicSlug(p.slug)}
               featured={p.data.featured}
               index={i}
             />

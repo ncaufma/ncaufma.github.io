@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const collabs = await getCollection('collaborations');
+const collabs = (await getCollection('collaborations')).filter(c => c.data.lang === 'en');
 
 const groups: Record<string, { label: string; items: typeof collabs }> = {
   university:         { label: 'Universities & Research Institutes', items: [] },

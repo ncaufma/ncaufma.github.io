@@ -1,15 +1,17 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { ui } from '../i18n';
+const copy = ui.en.notFound;
 ---
-<BaseLayout title="Page not found" noindex={true}>
+<BaseLayout lang="en" title={copy.title} noindex={true}>
   <div class="not-found">
     <div class="container not-found-inner">
       <div class="nf-code" aria-hidden="true">404</div>
-      <h1 class="nf-title">Page not found</h1>
-      <p class="nf-lead">The page you are looking for does not exist or has been moved.</p>
+      <h1 class="nf-title">{copy.title}</h1>
+      <p class="nf-lead">{copy.lead}</p>
       <div class="nf-actions">
-        <a href="/" class="btn btn-primary">Go home</a>
-        <a href="/projects" class="btn btn-ghost">See projects</a>
+        <a href="/en/" class="btn btn-primary">{copy.home}</a>
+        <a href="/en/projects" class="btn btn-ghost">{copy.projects}</a>
       </div>
     </div>
   </div>

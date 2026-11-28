@@ -4,16 +4,20 @@ import ProjectCard from '../../components/ui/ProjectCard.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
-  const areas = await getCollection('research-areas');
-  return areas.map(area => ({ params: { slug: area.slug }, props: { area } }));
+  const areas = (await getCollection('research-areas')).filter(area => area.data.lang === 'en');
+  return areas.map(area => ({
+    params: { slug: area.slug.replace(/^en\//, '') },
+    props: { area },
+  }));
 }
 
 const { area } = Astro.props;
 const { data } = area;
 const { Content } = await area.render();
 
-const allProjects = await getCollection('projects');
-const areaProjects = allProjects.filter(p => p.data.researchArea === area.slug);
+const allProjects = (await getCollection('projects')).filter(p => p.data.lang === 'en');
+const areaSlug = area.slug.replace(/^en\//, '');
+const areaProjects = allProjects.filter(p => p.data.researchArea === areaSlug);
 ---
 <BaseLayout title={data.title} description={data.summary}>
 
@@ -41,7 +45,7 @@ const areaProjects = allProjects.filter(p => p.data.researchArea === area.slug);
               status={p.data.status}
               description={p.data.description}
               highlights={p.data.highlights}
-              slug={p.slug}
+              slug={p.slug.replace(/^en\//, '')}
               index={i}
             />
           ))}

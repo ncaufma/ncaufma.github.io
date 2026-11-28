@@ -1,20 +1,29 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { ui } from '../../i18n';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map(p => ({ params: { slug: p.slug }, props: { project: p } }));
+  const projects = (await getCollection('projects')).filter(p => p.data.lang === 'en');
+  return projects.map(p => ({
+    params: { slug: p.slug.replace(/^en\//, '') },
+    props: { project: p },
+  }));
 }
 
 const { project } = Astro.props;
 const { data } = project;
 const { Content } = await project.render();
 
-const allTeam = await getCollection('team');
-const memberTeam = allTeam.filter(m => data.members?.includes(m.slug));
+const allTeam = (await getCollection('team')).filter(m => m.data.lang === 'en');
+const memberTeam = allTeam.filter(m => data.members?.includes(m.slug.replace(/^en\//, '')));
 
-const statusLabel: Record<string, string> = { active: 'Active', concluded: 'Concluded', paused: 'Paused' };
+const copy = ui.en.cards;
+const statusLabel: Record<string, string> = {
+  active: copy.active,
+  concluded: copy.concluded,
+  paused: copy.paused,
+};
 const statusClass: Record<string, string> = { active: 'tag-accent', concluded: 'tag-neutral', paused: 'tag-secondary' };
 
 const hasVideo = data.video && !data.video.startsWith('[REQUIRED');
@@ -31,7 +40,7 @@ const youtubeId = hasVideo && data.video ? data.video.replace(/.*(?:youtu\.be\/|
 
       <div class="hero-meta">
         <span class:list={['tag', statusClass[data.status] ?? 'tag-neutral']}>{statusLabel[data.status] ?? data.status}</span>
-        {data.featured && <span class="tag tag-primary">Featured</span>}
+        {data.featured && <span class="tag tag-primary">{copy.featured}</span>}
       </div>
 
       <h1 class="display-md" style="margin-top: var(--space-3)">{data.title}</h1>
@@ -105,7 +114,7 @@ const youtubeId = hasVideo && data.video ? data.video.replace(/.*(?:youtu\.be\/|
         <ul class="member-list">
           {memberTeam.map(m => (
             <li>
-              <a href={`/team/${m.slug}`} class="member-link">
+              <a href={`/team/${m.slug.replace(/^en\//, '')}`} class="member-link">
                 <div class="member-avatar">
                   {m.data.photo && !m.data.photo.startsWith('[REQUIRED') ? (
                     <img src={`/assets/team/${m.data.photo}`} alt={m.data.name} loading="lazy" />

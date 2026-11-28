@@ -1,0 +1,289 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/sections/Hero.astro';
+import ResearchAreaCard from '../../components/ui/ResearchAreaCard.astro';
+import ProjectCard from '../../components/ui/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { supportedLanguages, isLanguage, publicSlug, byLang, ui } from '../../i18n';
+
+export function getStaticPaths() {
+  return supportedLanguages.map(lang => ({ params: { lang } }));
+}
+
+const lang = isLanguage(Astro.params.lang) ? Astro.params.lang : 'en';
+const copy = ui[lang].home;
+const team = byLang(await getCollection('team'), lang);
+const projects = byLang(await getCollection('projects'), lang);
+const areas = byLang(await getCollection('research-areas'), lang)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const publications = byLang(await getCollection('publications'), 'en');
+const collaborations = byLang(await getCollection('collaborations'), lang);
+const featuredProjects = projects
+  .filter(project => project.data.featured)
+  .sort((a, b) => (b.data.status === 'active' ? 1 : 0) - (a.data.status === 'active' ? 1 : 0))
+  .slice(0, 3);
+const stats = [
+  { value: String(projects.length), label: copy.projects },
+  { value: String(areas.length), label: copy.researchAreas },
+  { value: String(team.length), label: copy.researchers },
+  { value: String(collaborations.length), label: copy.partners },
+];
+const featuredCollaborations = collaborations
+  .filter(collab => collab.data.featured)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .slice(0, 8);
+---
+
+<BaseLayout lang={lang} title="NCA-UFMA" description={copy.description}>
+  <Hero lang={lang} />
+
+  <section class="stats-section" aria-label={copy.statsAria}>
+    <div class="container stats-grid">
+      {stats.map(stat => (
+        <div class="stat-item">
+          <strong>{stat.value}</strong>
+          <span>{stat.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="home-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">{copy.researchKicker}</span>
+          <h2>{copy.researchTitle}</h2>
+        </div>
+        <a href={`/${lang}/research-areas/`} class="section-link">{copy.exploreAreas}</a>
+      </div>
+      <div class="areas-grid">
+        {areas.map((area, index) => {
+          const slug = publicSlug(area.slug);
+          return (
+            <ResearchAreaCard
+              title={area.data.title}
+              summary={area.data.summary}
+              slug={slug}
+              lang={lang}
+              color={area.data.color}
+              projectCount={projects.filter(project => project.data.researchArea === slug).length}
+              publicationCount={publications.filter(pub => pub.data.researchArea === slug).length}
+              index={index}
+            />
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  {featuredProjects.length > 0 && (
+    <section class="home-section home-section-alt">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">{copy.selectedWork}</span>
+            <h2>{copy.featuredProjects}</h2>
+          </div>
+          <a href={`/${lang}/projects/`} class="section-link">{copy.viewProjects}</a>
+        </div>
+        <div class="projects-grid">
+          {featuredProjects.map((project, index) => (
+            <ProjectCard
+              title={project.data.title}
+              partner={project.data.partner}
+              status={project.data.status}
+              description={project.data.description}
+              highlights={project.data.highlights}
+              slug={publicSlug(project.slug)}
+              lang={lang}
+              featured={project.data.featured}
+              index={index}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {featuredCollaborations.length > 0 && (
+    <section class="home-section partners-section">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">{copy.collaborationNetwork}</span>
+            <h2>{copy.partners}</h2>
+          </div>
+          <a href={`/${lang}/collaborations/`} class="section-link">{copy.meetPartners}</a>
+        </div>
+        <div class="partners-grid">
+          {featuredCollaborations.map(collaboration => (
+            <div class="partner-item">
+              {collaboration.data.logo && !collaboration.data.logo.startsWith('[REQUIRED') ? (
+                <img src={`/assets/collaborations/${collaboration.data.logo}`} alt={collaboration.data.name} loading="lazy" />
+              ) : (
+                <span>{collaboration.data.name}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="home-cta">
+    <div class="container home-cta-inner">
+      <div>
+        <span class="section-kicker">{copy.workWith}</span>
+        <h2>{copy.ctaTitle}</h2>
+      </div>
+      <a href={`/${lang}/about/`} class="btn btn-primary">{copy.aboutCta}</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+.stats-section {
+  border-bottom: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.stat-item {
+  min-height: 118px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  border-right: 1.5px solid var(--color-border);
+  text-align: center;
+}
+.stat-item:last-child { border-right: 0; }
+.stat-item strong {
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1;
+}
+.stat-item span {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.home-section {
+  padding-block: var(--space-16);
+}
+.home-section-alt {
+  background: var(--color-bg-alt);
+}
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+.section-heading h2 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  letter-spacing: -0.035em;
+}
+.section-kicker {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.section-link {
+  flex-shrink: 0;
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.section-link:hover { text-decoration: underline; }
+.areas-grid,
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+.partners-section {
+  border-top: 1.5px solid var(--color-border);
+  border-bottom: 1.5px solid var(--color-border);
+}
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.partner-item {
+  min-height: 112px;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  text-align: center;
+  font-weight: 700;
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+.partner-item:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+.partner-item img {
+  max-width: 150px;
+  max-height: 64px;
+  width: auto;
+  filter: grayscale(35%);
+  opacity: 0.88;
+}
+.home-cta {
+  background: var(--color-bg-dark);
+  color: #fff;
+}
+.home-cta-inner {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+.home-cta h2 {
+  max-width: 18ch;
+  color: #fff;
+  font-size: clamp(1.75rem, 4vw, 3.25rem);
+  letter-spacing: -0.04em;
+}
+.home-cta .section-kicker { color: var(--color-accent); }
+
+@media (max-width: 980px) {
+  .areas-grid,
+  .projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .partners-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-item:nth-child(2) { border-right: 0; }
+  .stat-item:nth-child(-n+2) { border-bottom: 1.5px solid var(--color-border); }
+  .areas-grid,
+  .projects-grid,
+  .partners-grid { grid-template-columns: 1fr; }
+  .section-heading,
+  .home-cta-inner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .home-section { padding-block: var(--space-10); }
+  .home-cta-inner { justify-content: center; min-height: 220px; }
+}
+</style>

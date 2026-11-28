@@ -1,0 +1,408 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { supportedLanguages, isLanguage, byLang, publicSlug, ui } from '../../i18n';
+
+export function getStaticPaths() {
+  return supportedLanguages.map(lang => ({ params: { lang } }));
+}
+
+const lang = isLanguage(Astro.params.lang) ? Astro.params.lang : 'en';
+const copy = ui[lang].collaborations;
+const collabs = byLang(await getCollection('collaborations'), lang);
+const collabSlug = (id: string) => publicSlug(id).replace(/\.md$/, '');
+const bySlug = new Map(collabs.map(c => [collabSlug(c.id), c]));
+
+const absorbedSlugs = new Set(
+  collabs.flatMap(c => c.data.absorbed ?? []),
+);
+
+const groups: Record<string, { label: string; items: typeof collabs }> = {
+  university: { label: copy.groups.university, items: [] },
+  company: { label: copy.groups.company, items: [] },
+  government: { label: copy.groups.government, items: [] },
+  'research-institute': { label: copy.groups['research-institute'], items: [] },
+};
+collabs.forEach(collab => {
+  if (absorbedSlugs.has(collabSlug(collab.id))) return;
+  const key = collab.data.type;
+  if (groups[key]) groups[key].items.push(collab);
+  else groups.university.items.push(collab);
+});
+
+const hasUrl = (url?: string) => Boolean(url && !url.startsWith('[REQUIRED'));
+const hasLogo = (logo?: string) => Boolean(logo && !logo.startsWith('[REQUIRED'));
+const hasText = (value?: string) => Boolean(value && !value.startsWith('[REQUIRED'));
+
+/** Bump small/illegible wordmarks so they match denser logos in the same grid. */
+const logoScaleByFile: Record<string, number> = {
+  'logochesf.svg': 1.23,
+  'logoportoitaqui.svg': 1.23,
+  'logoeneva.svg': 1.23,
+  'logosesi.svg': 1.39,
+  'logoalcoa.svg': 1.13,
+  'logoequatorial.svg': 1.13,
+  'logopetrobras.svg': 1.13,
+  'tce-capa-logo.png': 1.35,
+  'LOGO_GOV_MA_2023_MAIOR.svg': 1.35,
+  'mpma.svg': 1.23,
+  'AF_PRIMARIA_LOGO_AXIA_ENERGIA_VERTICAL_NEGATIVO_RBG.png': 1.23,
+  'logoprefeiturasaoluis.svg': 1.41,
+  'logotecgraf.svg': 1.2,
+  'logoucdavis.svg': 1.15,
+  'logoifma.svg': 1.1,
+  'logouporto.svg': 1.14,
+  'logoutad.svg': 1.1,
+};
+
+function logoMarkup(collab: (typeof collabs)[number]) {
+  const logoBg = hasText(collab.data.logoBg) ? collab.data.logoBg : undefined;
+  const logoScale = collab.data.logo ? logoScaleByFile[collab.data.logo] : undefined;
+  const wrapStyle = [
+    logoBg ? `--logo-bg: ${logoBg}` : '',
+    logoScale ? `--logo-scale: ${logoScale}` : '',
+  ].filter(Boolean).join('; ') || undefined;
+  const logoText = hasText(collab.data.logoText) ? collab.data.logoText : null;
+
+  return { wrapStyle, logoText };
+}
+---
+
+<BaseLayout lang={lang} title={copy.pageTitle} description={copy.description}>
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="display-lg">{copy.heading}</h1>
+      <p class="page-lead">{copy.lead}</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      {Object.entries(groups).map(([key, group]) => group.items.length > 0 && (
+        <div class="collab-group" data-key={key}>
+          <h2 class="group-title">{group.label}</h2>
+          <div class="collab-grid">
+            {group.items
+              .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99) || a.data.name.localeCompare(b.data.name))
+              .map(collab => {
+                const url = hasUrl(collab.data.url) ? collab.data.url : undefined;
+                const { wrapStyle, logoText } = logoMarkup(collab);
+                const fullName = hasText(collab.data.fullName) ? collab.data.fullName! : null;
+                const absorbed = (collab.data.absorbed ?? [])
+                  .map(slug => bySlug.get(slug))
+                  .filter((c): c is (typeof collabs)[number] => Boolean(c));
+
+                const cardBody = (
+                  <>
+                    <div class="collab-logo-wrap" style={wrapStyle}>
+                      {hasLogo(collab.data.logo) ? (
+                        <img src={`/assets/collaborations/${collab.data.logo}`} alt={copy.logoAlt.replace('{name}', collab.data.name)} loading="lazy" class="collab-logo" />
+                      ) : logoText ? (
+                        <span class="collab-logo-text" aria-hidden="true">{logoText}</span>
+                      ) : (
+                        <div class="collab-initials">
+                          {collab.data.name.split(/[\s/—–-]+/).filter(Boolean).map(word => word[0]).slice(0, 3).join('')}
+                        </div>
+                      )}
+                    </div>
+                    <div class="collab-info">
+                      <span
+                        class="collab-name"
+                        data-name-label
+                        data-short={collab.data.name}
+                        data-full={fullName ?? undefined}
+                      >{collab.data.name}</span>
+                      {hasText(collab.data.country) && (
+                        <span class="collab-country">{collab.data.country}</span>
+                      )}
+                    </div>
+                  </>
+                );
+
+                const mainCard = url ? (
+                  <a href={url} target="_blank" rel="noopener noreferrer" class="collab-card">
+                    {cardBody}
+                  </a>
+                ) : (
+                  <div class="collab-card no-link">
+                    {cardBody}
+                  </div>
+                );
+
+                const nameToggle = fullName ? (
+                  <button
+                    type="button"
+                    class="collab-name-toggle"
+                    aria-expanded="false"
+                    aria-label={copy.expandShowFullName}
+                    data-label-show={copy.expandShowFullName}
+                    data-label-hide={copy.expandShowShortName}
+                  >
+                    <span aria-hidden="true">▾</span>
+                  </button>
+                ) : null;
+
+                if (absorbed.length === 0 && !fullName) return mainCard;
+
+                if (absorbed.length === 0) {
+                  return (
+                    <div class="collab-card-shell" data-name-expand>
+                      {mainCard}
+                      {nameToggle}
+                    </div>
+                  );
+                }
+
+                return (
+                  <div class="collab-cluster" data-collab-expand>
+                    <div class="collab-cluster-main" data-name-expand={fullName ? '' : undefined}>
+                      {mainCard}
+                      {nameToggle}
+                      <button
+                        type="button"
+                        class="collab-expand-toggle"
+                        aria-expanded="false"
+                        aria-label={copy.expandShowAbsorbed}
+                        data-label-show={copy.expandShowAbsorbed}
+                        data-label-hide={copy.expandHideAbsorbed}
+                      >
+                        <span aria-hidden="true">▾</span>
+                      </button>
+                    </div>
+                    <div class="collab-cluster-panel" aria-hidden="true">
+                      <div class="collab-cluster-panel-inner">
+                      <p class="collab-cluster-label">{copy.absorbedLabel}</p>
+                      <div class="collab-cluster-absorbed">
+                        {absorbed.map(child => {
+                          const childUrl = hasUrl(child.data.url) ? child.data.url : undefined;
+                          const childMark = logoMarkup(child);
+                          const childLogoText = childMark.logoText;
+                          const childBody = (
+                            <>
+                              <div class="collab-logo-wrap" style={childMark.wrapStyle}>
+                                {hasLogo(child.data.logo) ? (
+                                  <img src={`/assets/collaborations/${child.data.logo}`} alt={copy.logoAlt.replace('{name}', child.data.name)} loading="lazy" class="collab-logo" />
+                                ) : childLogoText ? (
+                                  <span class="collab-logo-text collab-logo-text-sm" aria-hidden="true">{childLogoText}</span>
+                                ) : (
+                                  <div class="collab-initials">
+                                    {child.data.name.split(/[\s/—–-]+/).filter(Boolean).map(word => word[0]).slice(0, 3).join('')}
+                                  </div>
+                                )}
+                              </div>
+                              <div class="collab-info">
+                                <span class="collab-name">{child.data.name}</span>
+                                {hasText(child.data.country) && (
+                                  <span class="collab-country">{child.data.country}</span>
+                                )}
+                              </div>
+                            </>
+                          );
+                          return childUrl ? (
+                            <a href={childUrl} target="_blank" rel="noopener noreferrer" class="collab-card collab-card-absorbed">
+                              {childBody}
+                            </a>
+                          ) : (
+                            <div class="collab-card collab-card-absorbed no-link">
+                              {childBody}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-name-expand]').forEach(shell => {
+    const button = shell.querySelector<HTMLButtonElement>('.collab-name-toggle');
+    const label = shell.querySelector<HTMLElement>('[data-name-label]');
+    if (!button || !label) return;
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const open = shell.classList.toggle('is-name-open');
+      const next = open ? (label.dataset.full ?? label.dataset.short ?? '') : (label.dataset.short ?? '');
+      label.textContent = next;
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+      button.setAttribute(
+        'aria-label',
+        open
+          ? (button.dataset.labelHide ?? button.getAttribute('aria-label') ?? '')
+          : (button.dataset.labelShow ?? button.getAttribute('aria-label') ?? ''),
+      );
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-collab-expand]').forEach(cluster => {
+    const button = cluster.querySelector<HTMLButtonElement>('.collab-expand-toggle');
+    const panel = cluster.querySelector<HTMLElement>('.collab-cluster-panel');
+    if (!button || !panel) return;
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const open = cluster.classList.toggle('is-open');
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+      button.setAttribute(
+        'aria-label',
+        open
+          ? (button.dataset.labelHide ?? button.getAttribute('aria-label') ?? '')
+          : (button.dataset.labelShow ?? button.getAttribute('aria-label') ?? ''),
+      );
+      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+    });
+  });
+</script>
+
+<style>
+.page-hero { padding-block:var(--space-8) var(--space-10); background:var(--color-bg-alt); }
+.page-lead { font-size:1.125rem; color:var(--color-text-muted); max-width:54ch; margin-top:var(--space-4); }
+.collab-group { margin-bottom:var(--space-10); }
+.group-title { font-size:1.1rem; padding-bottom:var(--space-4); border-bottom:1.5px solid var(--color-border); margin-bottom:var(--space-6); }
+.collab-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr)); gap:var(--space-4); align-items:start; }
+.collab-card {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:var(--space-3);
+  padding:var(--space-5);
+  border:1.5px solid var(--color-border);
+  border-radius:var(--radius-lg);
+  text-decoration:none;
+  color:inherit;
+  text-align:center;
+  background:var(--color-bg);
+  height:100%;
+  box-sizing:border-box;
+}
+.collab-card.no-link { cursor:default; }
+.collab-logo-wrap {
+  width: calc(80px * var(--logo-scale, 1));
+  height: calc(60px * var(--logo-scale, 1));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.collab-logo-wrap[style*="--logo-bg"] {
+  background: var(--logo-bg);
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+  padding: 0.35rem;
+}
+.collab-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.collab-logo-text {
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: var(--color-primary);
+}
+.collab-logo-text-sm { font-size: 1rem; letter-spacing: 0.02em; }
+.collab-initials { width:64px; height:64px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--color-bg-alt); font-weight:800; }
+.collab-info { display:flex; flex-direction:column; }
+.collab-name { font-weight:700; }
+.collab-country { color:var(--color-text-muted); font-size:.875rem; }
+
+.collab-card-shell,
+.collab-cluster-main {
+  position:relative;
+  min-width:0;
+}
+.collab-card-shell > .collab-card,
+.collab-cluster-main > .collab-card {
+  min-height:100%;
+  height:100%;
+}
+.collab-name-toggle,
+.collab-expand-toggle {
+  position:absolute;
+  z-index:2;
+  width:1.75rem;
+  height:1.75rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--color-border);
+  border-radius:999px;
+  background:var(--color-bg);
+  color:var(--color-text-muted);
+  font-size:.85rem;
+  line-height:1;
+  cursor:pointer;
+  padding:0;
+  transition: transform .25s ease, color .15s ease, border-color .15s ease;
+}
+.collab-name-toggle { top:.45rem; right:.45rem; }
+.collab-expand-toggle { top:.45rem; right:.45rem; }
+.collab-cluster-main:has(.collab-name-toggle) .collab-expand-toggle {
+  right: 2.4rem;
+}
+.collab-name-toggle:hover,
+.collab-name-toggle:focus-visible,
+.collab-expand-toggle:hover,
+.collab-expand-toggle:focus-visible {
+  color:var(--color-primary);
+  border-color:var(--color-primary);
+  outline:none;
+}
+.collab-card-shell.is-name-open .collab-name-toggle,
+.collab-cluster-main.is-name-open .collab-name-toggle,
+.collab-cluster.is-open .collab-expand-toggle {
+  transform: rotate(180deg);
+}
+.collab-cluster {
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-2);
+  min-width:0;
+}
+.collab-cluster-panel {
+  display:grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .35s ease;
+}
+.collab-cluster.is-open .collab-cluster-panel {
+  grid-template-rows: 1fr;
+}
+.collab-cluster-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+  pointer-events: none;
+}
+.collab-cluster.is-open .collab-cluster-panel-inner {
+  pointer-events: auto;
+}
+.collab-cluster-label {
+  margin: 0 0 var(--space-2);
+  font-size: .75rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.collab-cluster-absorbed {
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-2);
+}
+.collab-card-absorbed {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-alt);
+}
+.collab-card-absorbed .collab-logo-wrap {
+  width: calc(64px * var(--logo-scale, 1));
+  height: calc(48px * var(--logo-scale, 1));
+}
+.collab-card-absorbed .collab-name { font-size: .95rem; }
+</style>

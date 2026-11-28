@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const pubs = await getCollection('publications');
+const pubs = (await getCollection('publications')).filter(p => p.data.lang === 'en');
 const sorted = pubs.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
 
 const years = [...new Set(sorted.map(p => p.data.year).filter(Boolean))].sort((a, b) => b! - a!);

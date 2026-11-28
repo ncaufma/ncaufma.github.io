@@ -1,0 +1,295 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { supportedLanguages, isLanguage, publicSlug, byLang, ui } from '../../../i18n';
+
+export async function getStaticPaths() {
+  const team = await getCollection('team');
+  return supportedLanguages.flatMap(lang =>
+    byLang(team, lang).map(member => ({
+      params: { lang, slug: publicSlug(member.slug) },
+      props: { member },
+    })),
+  );
+}
+
+const lang = isLanguage(Astro.params.lang) ? Astro.params.lang : 'en';
+const { member } = Astro.props;
+const copy = ui[lang].team;
+const roles = ui[lang].roles as Record<string, string>;
+const roleLabel = roles[member.data.role] ?? member.data.role;
+const { Content } = await member.render();
+const memberSlug = publicSlug(member.slug);
+const memberProjects = byLang(await getCollection('projects'), lang)
+  .filter(project => project.data.members?.includes(memberSlug));
+const hasLink = (value?: string) => value && !value.startsWith('[REQUIRED');
+const cleanText = (value?: string) =>
+  value && !value.startsWith('[REQUIRED') ? value : null;
+const cleanResearchLines = (member.data.researchLines ?? [])
+  .filter(line => line && !line.startsWith('[REQUIRED'));
+const cleanHighlights = (member.data.highlights ?? [])
+  .filter(highlight => highlight && !highlight.startsWith('[REQUIRED'));
+const socialLinks = [
+  hasLink(member.data.orcid) ? { label: 'ORCID', href: `https://orcid.org/${member.data.orcid}` } : null,
+  hasLink(member.data.googleScholar) ? { label: 'Scholar', href: member.data.googleScholar } : null,
+  hasLink(member.data.lattes) ? { label: 'Lattes', href: member.data.lattes } : null,
+  hasLink(member.data.linkedin) ? { label: 'LinkedIn', href: member.data.linkedin } : null,
+].filter((link): link is { label: string; href: string } => Boolean(link));
+---
+
+<BaseLayout lang={lang} title={member.data.name} description={member.data.bio}>
+  <div class="page-hero">
+    <div class="container profile-hero">
+      <a href={`/${lang}/team/`} class="profile-back">{copy.backToTeam}</a>
+      <div class="profile-photo-wrap">
+        {member.data.photo && hasLink(member.data.photo) ? (
+          <img src={`/assets/team/${member.data.photo}`} alt={copy.photoAlt.replace('{name}', member.data.name)} class="profile-photo" width="160" height="160" />
+        ) : (
+          <div class="profile-initials">
+            {member.data.name.split(' ').map((word: string) => word[0]).filter(Boolean).slice(0, 2).join('')}
+          </div>
+        )}
+      </div>
+      <div class="profile-meta">
+        <span class="profile-role">{roleLabel}</span>
+        <h1 class="display-lg">{member.data.name}</h1>
+        {cleanText(member.data.title) && <p class="page-lead">{cleanText(member.data.title)}</p>}
+        {cleanText(member.data.email) && <a href={`mailto:${cleanText(member.data.email)}`} class="profile-email">{cleanText(member.data.email)}</a>}
+        {socialLinks.length > 0 && (
+          <div class="profile-socials">
+            {socialLinks.map(link => (
+              <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+  <div class="container section">
+    {cleanText(member.data.bio) && (
+      <section class="profile-overview">
+        <div class="profile-overview-main">
+          <span class="profile-section-label">{copy.academicProfile}</span>
+          <p class="profile-bio">{member.data.bio}</p>
+        </div>
+        <aside class="profile-facts" aria-label={copy.academicSummary}>
+          {cleanText(member.data.title) && (
+            <div>
+              <strong>{member.data.title}</strong>
+              <span>{copy.academicPosition}</span>
+            </div>
+          )}
+          <div>
+            <strong>{roleLabel}</strong>
+            <span>{copy.roleAt}</span>
+          </div>
+          {cleanResearchLines.length > 0 && (
+            <div>
+              <strong>{cleanResearchLines.length}</strong>
+              <span>{copy.researchLines}</span>
+            </div>
+          )}
+        </aside>
+      </section>
+    )}
+    {cleanResearchLines.length > 0 && (
+      <section class="profile-section">
+        <h2>{copy.researchLinesHeading}</h2>
+        <div class="research-lines">
+          {cleanResearchLines.map(line => <span class="tag tag-secondary">{line}</span>)}
+        </div>
+      </section>
+    )}
+    {Content && !member.body?.includes('[REQUIRED') && <div class="prose"><Content /></div>}
+    {cleanHighlights.length > 0 && (
+      <section class="profile-section">
+        <h2>{copy.highlights}</h2>
+        <ul>{cleanHighlights.map(highlight => <li>{highlight}</li>)}</ul>
+      </section>
+    )}
+    {memberProjects.length > 0 && (
+      <section class="profile-section">
+        <h2>{copy.associatedProjects}</h2>
+        <ul class="projects-list">
+          {memberProjects.map(project => (
+            <li>
+              <a href={`/${lang}/projects/${publicSlug(project.slug)}`}>{project.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+.profile-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: var(--space-8);
+  align-items: center;
+  padding-block: var(--space-10);
+}
+.profile-back {
+  position: absolute;
+  top: var(--space-4);
+  left: clamp(1rem, 5vw, 3rem);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.profile-back:hover { color: var(--color-primary); }
+.profile-photo-wrap {
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-alt);
+}
+.profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-initials {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+.profile-meta { min-width: 0; }
+.profile-role {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.page-lead {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+.profile-email {
+  display: inline-block;
+  margin-top: var(--space-3);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.profile-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+.profile-socials a {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.profile-socials a:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.profile-bio {
+  max-width: 720px;
+  color: var(--color-text-muted);
+  line-height: 1.75;
+}
+.profile-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: var(--space-8);
+  align-items: start;
+  padding-bottom: var(--space-8);
+}
+.profile-section-label {
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.profile-facts {
+  overflow: hidden;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+.profile-facts div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.profile-facts div:last-child { border-bottom: 0; }
+.profile-facts strong {
+  color: var(--color-text);
+  font-size: 0.875rem;
+}
+.profile-facts span {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+.profile-section {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1.5px solid var(--color-border);
+}
+.profile-section h2 {
+  margin-bottom: var(--space-4);
+  font-size: 1.25rem;
+}
+.research-lines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.projects-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  list-style: none;
+}
+.projects-list a {
+  display: block;
+  min-height: 64px;
+  padding: var(--space-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-weight: 700;
+  transition: all var(--transition-fast);
+}
+.projects-list a:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+@media (max-width: 900px) {
+  .profile-hero {
+    grid-template-columns: 1fr;
+    padding-top: calc(var(--space-12) + var(--space-4));
+  }
+  .profile-photo-wrap {
+    width: 150px;
+    height: 150px;
+  }
+  .projects-list { grid-template-columns: 1fr; }
+  .profile-overview { grid-template-columns: 1fr; }
+}
+</style>

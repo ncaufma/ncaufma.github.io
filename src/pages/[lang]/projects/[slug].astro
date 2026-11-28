@@ -1,0 +1,266 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { supportedLanguages, isLanguage, publicSlug, byLang, ui } from '../../../i18n';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return supportedLanguages.flatMap(lang =>
+    byLang(projects, lang).map(project => ({
+      params: { lang, slug: publicSlug(project.slug) },
+      props: { project },
+    })),
+  );
+}
+
+const lang = isLanguage(Astro.params.lang) ? Astro.params.lang : 'en';
+const { project } = Astro.props;
+const copy = ui[lang].projects;
+const cards = ui[lang].cards;
+const roles = ui[lang].roles as Record<string, string>;
+const { Content } = await project.render();
+const allTeam = byLang(await getCollection('team'), lang);
+const memberTeam = allTeam.filter(member => project.data.members?.includes(publicSlug(member.slug)));
+const areas = byLang(await getCollection('research-areas'), lang);
+const area = project.data.researchArea
+  ? areas.find(item => publicSlug(item.slug) === project.data.researchArea)
+  : undefined;
+const statusLabel: Record<string, string> = {
+  active: cards.active,
+  concluded: cards.concluded,
+  paused: cards.paused,
+};
+const statusClass: Record<string, string> = { active: 'tag-accent', concluded: 'tag-neutral', paused: 'tag-secondary' };
+const hasVideo = project.data.video && !project.data.video.startsWith('[REQUIRED');
+const youtubeId = hasVideo && project.data.video
+  ? project.data.video.replace(/.*(?:youtu\.be\/|v=)([^&]+).*/, '$1')
+  : null;
+---
+
+<BaseLayout lang={lang} title={project.data.title} description={project.data.description}>
+  <div class="page-hero">
+    <div class="container">
+      <div class="hero-breadcrumb">
+        <a href={`/${lang}/projects`}>{copy.back}</a>
+        {project.data.researchArea && (
+          <>
+            <span aria-hidden="true">/</span>
+            <a href={`/${lang}/research-areas/${project.data.researchArea}`}>
+              {area?.data.title ?? project.data.researchArea.replace(/-/g, ' ')}
+            </a>
+          </>
+        )}
+      </div>
+      <div class="hero-meta">
+        <span class:list={['tag', statusClass[project.data.status]]}>{statusLabel[project.data.status]}</span>
+        {project.data.featured && <span class="tag tag-primary">{cards.featured}</span>}
+      </div>
+      <h1 class="display-lg">{project.data.title}</h1>
+      {project.data.partner && <p class="page-lead">{project.data.partner}</p>}
+    </div>
+  </div>
+  <div class="container section">
+    {project.data.description && (
+      <p class="project-description">{project.data.description}</p>
+    )}
+    {youtubeId && (
+      <div class="video-embed">
+        <iframe
+          src={`https://www.youtube.com/embed/${youtubeId}`}
+          title={copy.video.replace('{title}', project.data.title)}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      </div>
+    )}
+    {project.data.highlights?.length > 0 && (
+      <div class="project-highlights-box">
+        <h2>{copy.highlights}</h2>
+        <ul>{project.data.highlights.map(highlight => <li>{highlight}</li>)}</ul>
+      </div>
+    )}
+    {Content && <div class="prose"><Content /></div>}
+    <section class="project-section">
+      <h2>{copy.info}</h2>
+      <div class="info-grid">
+        <div class="info-row"><span class="info-label">{copy.partner}</span><span class="info-value">{project.data.partner ?? '—'}</span></div>
+        {project.data.funding && <div class="info-row"><span class="info-label">{copy.funding}</span><span class="info-value">{project.data.funding}</span></div>}
+        {project.data.startDate && <div class="info-row"><span class="info-label">{copy.start}</span><span class="info-value">{project.data.startDate}</span></div>}
+        {project.data.endDate && <div class="info-row"><span class="info-label">{copy.end}</span><span class="info-value">{project.data.endDate}</span></div>}
+        <div class="info-row"><span class="info-label">{copy.status}</span><span class:list={['tag', statusClass[project.data.status]]}>{statusLabel[project.data.status]}</span></div>
+      </div>
+    </section>
+    {memberTeam.length > 0 && (
+      <section class="project-section">
+        <h2>{copy.team}</h2>
+        <ul class="member-list">
+          {memberTeam.map(member => (
+            <li>
+              <a href={`/${lang}/team/${publicSlug(member.slug)}`} class="member-link">
+                <span class="member-avatar">
+                  {member.data.photo && !member.data.photo.startsWith('[REQUIRED') ? (
+                    <img src={`/assets/team/${member.data.photo}`} alt="" loading="lazy" />
+                  ) : (
+                    member.data.name.split(' ').map(word => word[0]).filter(Boolean).slice(0, 2).join('')
+                  )}
+                </span>
+                <span>
+                  <span class="member-name">{member.data.name}</span>
+                  {member.data.role && <span class="member-role">{roles[member.data.role] ?? member.data.role}</span>}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+    {project.data.tags?.length > 0 && (
+      <section class="project-section">
+        <h2>{copy.tags}</h2>
+        <div class="tags-list">
+          {project.data.tags.map(tag => <span class="tag tag-neutral">{tag}</span>)}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+.page-hero {
+  background: var(--color-bg-alt);
+  padding-block: var(--space-8) var(--space-10);
+}
+.hero-breadcrumb {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font-size: 0.875rem;
+  margin-bottom: var(--space-4);
+}
+.hero-breadcrumb a { color: var(--color-text-muted); }
+.hero-breadcrumb a:hover { color: var(--color-primary); }
+.hero-meta { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.page-lead { margin-top: var(--space-2); color: var(--color-accent); font-weight: 600; }
+.section {
+  max-width: 820px;
+  margin-inline: auto;
+}
+.project-description {
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+  line-height: 1.75;
+  margin-bottom: var(--space-8);
+}
+.video-embed {
+  position: relative;
+  height: 0;
+  padding-bottom: 56.25%;
+  margin-bottom: var(--space-8);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+.video-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.project-highlights-box {
+  margin-bottom: var(--space-8);
+  padding: var(--space-5) var(--space-6);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background: var(--color-bg-alt);
+}
+.project-highlights-box h2 {
+  margin-bottom: var(--space-3);
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.project-highlights-box ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.project-section {
+  margin-top: var(--space-8);
+}
+.project-section h2 {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1.5px solid var(--color-border);
+  font-size: 1.15rem;
+}
+.info-grid {
+  overflow: hidden;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.95rem;
+  background: var(--color-bg);
+}
+.info-row:last-child { border-bottom: 0; }
+.info-label { color: var(--color-text-muted); }
+.info-value { text-align: right; font-weight: 600; }
+.member-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-3);
+  list-style: none;
+}
+.member-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 68px;
+  padding: var(--space-3);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+}
+.member-link:hover {
+  border-color: var(--color-primary);
+  background: var(--color-bg-alt);
+  transform: translateY(-2px);
+}
+.member-avatar {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.member-name { display: block; font-size: 0.875rem; font-weight: 700; }
+.member-role { display: block; margin-top: 1px; color: var(--color-text-muted); font-size: 0.75rem; }
+.tags-list { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+@media (max-width: 600px) {
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .info-value { text-align: left; }
+  .member-list { grid-template-columns: 1fr; }
+}
+</style>

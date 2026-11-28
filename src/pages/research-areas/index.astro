@@ -3,17 +3,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ResearchAreaCard from '../../components/ui/ResearchAreaCard.astro';
 import { getCollection } from 'astro:content';
 
-const areas    = (await getCollection('research-areas')).sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
-const projects = await getCollection('projects');
-const pubs     = await getCollection('publications');
+const areas = (await getCollection('research-areas'))
+  .filter(a => a.data.lang === 'en')
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const projects = (await getCollection('projects')).filter(p => p.data.lang === 'en');
+const pubs     = (await getCollection('publications')).filter(p => p.data.lang === 'en');
+const publicSlug = (slug: string) => slug.replace(/^en\//, '');
 
 const projectCounts = areas.reduce((acc, a) => {
-  acc[a.slug] = projects.filter(p => p.data.researchArea === a.slug).length;
+  acc[publicSlug(a.slug)] = projects.filter(p => p.data.researchArea === publicSlug(a.slug)).length;
   return acc;
 }, {} as Record<string, number>);
 
 const pubCounts = areas.reduce((acc, a) => {
-  acc[a.slug] = pubs.filter(p => p.data.researchArea === a.slug).length;
+  acc[publicSlug(a.slug)] = pubs.filter(p => p.data.researchArea === publicSlug(a.slug)).length;
   return acc;
 }, {} as Record<string, number>);
 ---
@@ -33,10 +36,10 @@ const pubCounts = areas.reduce((acc, a) => {
           <ResearchAreaCard
             title={area.data.title}
             summary={area.data.summary}
-            slug={area.slug}
+            slug={publicSlug(area.slug)}
             color={area.data.color}
-            projectCount={projectCounts[area.slug]}
-            publicationCount={pubCounts[area.slug]}
+            projectCount={projectCounts[publicSlug(area.slug)]}
+            publicationCount={pubCounts[publicSlug(area.slug)]}
             index={i}
           />
         ))}

@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ProjectCard from '../../../components/ui/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { supportedLanguages, isLanguage, publicSlug, byLang, ui } from '../../../i18n';
+
+export function getStaticPaths() {
+  return supportedLanguages.map(lang => ({ params: { lang } }));
+}
+
+const lang = isLanguage(Astro.params.lang) ? Astro.params.lang : 'en';
+const copy = ui[lang].projects;
+const projects = byLang(await getCollection('projects'), lang);
+const areas = byLang(await getCollection('research-areas'), lang);
+const sorted = projects.sort((a, b) => {
+  if (a.data.status === 'active' && b.data.status !== 'active') return -1;
+  if (b.data.status === 'active' && a.data.status !== 'active') return 1;
+  return a.data.title.localeCompare(b.data.title);
+});
+const activeCount = projects.filter(project => project.data.status === 'active').length;
+const concludedCount = projects.filter(project => project.data.status === 'concluded').length;
+---
+
+<BaseLayout lang={lang} title={copy.pageTitle} description={copy.description}>
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="display-lg">{copy.pageTitle}</h1>
+      <p class="page-lead">{copy.lead.replace('{count}', String(projects.length))}</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="container">
+      <div class="filter-bar" id="filter-bar" role="group" aria-label={copy.filtersAria}>
+        <button class="filter-chip active" data-filter="all">{copy.all} ({projects.length})</button>
+        <button class="filter-chip" data-filter="active">{copy.active} ({activeCount})</button>
+        <button class="filter-chip" data-filter="concluded">{copy.concluded} ({concludedCount})</button>
+        {areas.map(area => (
+          <button class="filter-chip" data-filter={`area-${publicSlug(area.slug)}`}>
+            {area.data.title.split(' ').slice(0, 2).join(' ')}
+            ({projects.filter(project => project.data.researchArea === publicSlug(area.slug)).length})
+          </button>
+        ))}
+      </div>
+      <div class="projects-grid" id="projects-grid">
+        {sorted.map((project, index) => (
+          <div
+            class="project-wrapper"
+            data-status={project.data.status}
+            data-area={project.data.researchArea ?? ''}
+          >
+            <ProjectCard
+              title={project.data.title}
+              partner={project.data.partner}
+              status={project.data.status}
+              description={project.data.description}
+              highlights={project.data.highlights}
+              slug={publicSlug(project.slug)}
+              lang={lang}
+              featured={project.data.featured}
+              index={index}
+            />
+          </div>
+        ))}
+      </div>
+      <p class="no-results" id="no-results" style="display:none" aria-live="polite">
+        {copy.noResults}
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('#filter-bar .filter-chip');
+  const wrappers = document.querySelectorAll<HTMLElement>('#projects-grid .project-wrapper');
+  const noResults = document.getElementById('no-results');
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(item => item.classList.remove('active'));
+      chip.classList.add('active');
+      const filter = chip.dataset.filter;
+      let visible = 0;
+
+      wrappers.forEach(wrapper => {
+        const show =
+          filter === 'all' ||
+          (filter === 'active' && wrapper.dataset.status === 'active') ||
+          (filter === 'concluded' && wrapper.dataset.status === 'concluded') ||
+          filter === `area-${wrapper.dataset.area}`;
+        wrapper.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      if (noResults) noResults.style.display = visible === 0 ? '' : 'none';
+    });
+  });
+</script>
+
+<style>
+.page-hero {
+  padding-block: var(--space-8) var(--space-10);
+  background: var(--color-bg-alt);
+}
+.page-lead {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  max-width: 56ch;
+  margin-top: var(--space-4);
+}
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+}
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+.no-results {
+  text-align: center;
+  padding: var(--space-16);
+  color: var(--color-text-muted);
+  font-size: 1.125rem;
+}
+@media (max-width: 900px) {
+  .projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .projects-grid { grid-template-columns: minmax(0, 1fr); }
+}
+</style>

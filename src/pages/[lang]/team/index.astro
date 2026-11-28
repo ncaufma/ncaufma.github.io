@@ -1,0 +1,465 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import TeamCard from '../../../components/ui/TeamCard.astro';
+import { getCollection } from 'astro:content';
+import { supportedLanguages, isLanguage, publicSlug, byLang, ui } from '../../../i18n';
+
+export function getStaticPaths() {
+  return supportedLanguages.map(lang => ({ params: { lang } }));
+}
+
+const lang = isLanguage(Astro.params.lang) ? Astro.params.lang : 'en';
+const copy = ui[lang].team;
+const all = byLang(await getCollection('team'), lang);
+const active = all.filter(member => member.data.active !== false);
+const alumni = all.filter(member => member.data.active === false);
+
+type Member = (typeof all)[number];
+type RankKey = 'full' | 'associate' | 'assistant' | 'assistente' | 'other';
+
+const byOrder = (a: { data: { order?: number; name: string } }, b: { data: { order?: number; name: string } }) =>
+  (a.data.order ?? 99) - (b.data.order ?? 99) || a.data.name.localeCompare(b.data.name);
+
+const pi = active.filter(member => member.data.role === 'Principal Investigator').sort(byOrder);
+const postdocs = active.filter(member => member.data.role === 'Postdoc' || member.data.role === 'Visiting Scholar').sort(byOrder);
+const phd = active.filter(member => member.data.role === 'PhD Student').sort(byOrder);
+const masters = active.filter(member => member.data.role === 'Masters Student').sort(byOrder);
+const undergrads = active.filter(member => member.data.role === 'Undergraduate').sort(byOrder);
+const staff = active.filter(member => member.data.role === 'Staff').sort(byOrder);
+
+/** Map free-text academic titles onto PI rank buckets (EN/PT/ES). */
+function piRank(title?: string): RankKey {
+  const t = (title ?? '').toLowerCase();
+  if (/titular|full professor/.test(t)) return 'full';
+  if (/associad[oa]|associate professor/.test(t)) return 'associate';
+  // BR "Assistente" before EN "assistant" — "assistente" contains "assistant" as substring
+  if (/assistente/.test(t)) return 'assistente';
+  if (/adjunt[oa]|\bassistant professor\b/.test(t)) return 'assistant';
+  return 'other';
+}
+
+const rankOrder: RankKey[] = ['full', 'associate', 'assistant', 'assistente', 'other'];
+
+function splitByRank(items: Member[]) {
+  return rankOrder
+    .map(id => ({
+      id,
+      label: copy.ranks[id],
+      items: items.filter(member => piRank(member.data.title) === id),
+    }))
+    .filter(group => group.items.length > 0);
+}
+
+type RailGroup = {
+  id: string;
+  label: string;
+  items: Member[];
+  rails: { id: string; label?: string; items: Member[] }[];
+};
+
+const groups: RailGroup[] = [
+  { id: 'pi', label: copy.groups.pi, items: pi, rails: splitByRank(pi) },
+  { id: 'postdocs', label: copy.groups.postdocs, items: postdocs, rails: [{ id: 'all', items: postdocs }] },
+  { id: 'phd', label: copy.groups.phd, items: phd, rails: [{ id: 'all', items: phd }] },
+  { id: 'masters', label: copy.groups.masters, items: masters, rails: [{ id: 'all', items: masters }] },
+  { id: 'undergrads', label: copy.groups.undergrads, items: undergrads, rails: [{ id: 'all', items: undergrads }] },
+  { id: 'staff', label: copy.groups.staff, items: staff, rails: [{ id: 'all', items: staff }] },
+].filter(group => group.items.length > 0);
+
+const alumniGroups = [
+  { id: 'postdocs', label: copy.alumniGroups.postdocs, items: alumni.filter(member => member.data.role === 'Postdoc' || member.data.role === 'Visiting Scholar').sort(byOrder) },
+  { id: 'phd', label: copy.alumniGroups.phd, items: alumni.filter(member => member.data.role === 'PhD Student').sort(byOrder) },
+  { id: 'masters', label: copy.alumniGroups.masters, items: alumni.filter(member => member.data.role === 'Masters Student').sort(byOrder) },
+  { id: 'undergrads', label: copy.alumniGroups.undergrads, items: alumni.filter(member => member.data.role === 'Undergraduate').sort(byOrder) },
+].filter(group => group.items.length > 0);
+
+const stats = [
+  { value: active.length, label: copy.stats.active },
+  { value: pi.length, label: copy.stats.pi },
+  { value: postdocs.length + phd.length, label: copy.stats.postdocsPhd },
+  { value: alumni.length, label: copy.stats.alumni },
+];
+---
+
+<BaseLayout lang={lang} title={copy.pageTitle} description={copy.description}>
+  <div class="page-hero team-hero">
+    <div class="container team-hero-inner">
+      <div>
+        <span class="hero-kicker">{copy.kicker}</span>
+        <h1 class="display-lg">{copy.heading}</h1>
+        <p class="page-lead">{copy.lead}</p>
+      </div>
+      <a href={`/${lang}/research-areas/`} class="btn btn-outline">{copy.exploreAreas}</a>
+    </div>
+  </div>
+
+  <section class="team-stats" aria-label={copy.statsAria}>
+    <div class="container team-stats-grid">
+      {stats.map(stat => (
+        <div class="team-stat">
+          <strong>{stat.value}</strong>
+          <span>{stat.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="team-controls">
+    <div class="container">
+      <div class="team-filter-bar" id="team-filter-bar" role="group" aria-label={copy.filtersAria}>
+        <button class="team-filter active" data-team-filter="all">{copy.filters.all}</button>
+        <button class="team-filter" data-team-filter="pi">{copy.filters.pi}</button>
+        {postdocs.length > 0 && <button class="team-filter" data-team-filter="postdocs">{copy.filters.postdocs}</button>}
+        {phd.length > 0 && <button class="team-filter" data-team-filter="phd">{copy.filters.phd}</button>}
+        {masters.length > 0 && <button class="team-filter" data-team-filter="masters">{copy.filters.masters}</button>}
+        {undergrads.length > 0 && <button class="team-filter" data-team-filter="undergrads">{copy.filters.undergrads}</button>}
+        {staff.length > 0 && <button class="team-filter" data-team-filter="staff">{copy.filters.staff}</button>}
+        {alumni.length > 0 && <button class="team-filter" data-team-filter="alumni">{copy.filters.alumni}</button>}
+      </div>
+    </div>
+  </section>
+
+  {groups.map(group => {
+    const ranked = group.id === 'pi' && group.rails.some(rail => rail.label);
+    return (
+      <section class="section section--sm team-group" data-team-category={group.id}>
+        <div class="container">
+          <div class="group-heading-row">
+            <h2 class="group-heading">{group.label}</h2>
+            <span class="group-count">{group.items.length}</span>
+          </div>
+          <p class="rail-hint">{copy.railHint}</p>
+
+          {/* Desktop: one flat grid (no rank hierarchy). Mobile PI uses ranked rails below. */}
+          {ranked && (
+            <div class="team-desktop-grid">
+              {group.items.map((member, index) => (
+                <TeamCard
+                  name={member.data.name}
+                  title={member.data.title}
+                  role={member.data.role}
+                  photo={member.data.photo}
+                  email={member.data.email}
+                  researchLines={member.data.researchLines}
+                  orcid={member.data.orcid}
+                  googleScholar={member.data.googleScholar}
+                  linkedin={member.data.linkedin}
+                  instagram={member.data.instagram}
+                  twitter={member.data.twitter}
+                  slug={publicSlug(member.slug)}
+                  lang={lang}
+                  index={index}
+                />
+              ))}
+            </div>
+          )}
+
+          <div class:list={['team-rails', { 'team-rails--mobile-only': ranked }]}>
+            {group.rails.map(rail => (
+              <div class="team-rail-block">
+                {rail.label && (
+                  <div class="rail-heading-row">
+                    <h3 class="rail-heading">{rail.label}</h3>
+                    <span class="rail-count">{rail.items.length}</span>
+                  </div>
+                )}
+                <div class="team-rail" tabindex="0" aria-label={rail.label ?? group.label}>
+                  <div class="team-rail-track">
+                    {rail.items.map((member, index) => (
+                      <div class="team-rail-item">
+                        <TeamCard
+                          name={member.data.name}
+                          title={member.data.title}
+                          role={member.data.role}
+                          photo={member.data.photo}
+                          email={member.data.email}
+                          researchLines={member.data.researchLines}
+                          orcid={member.data.orcid}
+                          googleScholar={member.data.googleScholar}
+                          linkedin={member.data.linkedin}
+                          instagram={member.data.instagram}
+                          twitter={member.data.twitter}
+                          slug={publicSlug(member.slug)}
+                          lang={lang}
+                          index={index}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  })}
+
+  {alumniGroups.length > 0 && (
+    <section class="section alumni-section" data-team-category="alumni">
+      <div class="container">
+        <div class="group-heading-row">
+          <h2 class="section-title">{copy.alumni}</h2>
+          <span class="group-count">{alumni.length}</span>
+        </div>
+        {alumniGroups.map(group => (
+          <div class="alumni-block">
+            <h3 class="alumni-heading">{group.label}</h3>
+            <ul class="alumni-list">
+              {group.items.map(member => (
+                <li class="alumni-item">
+                  <a href={`/${lang}/team/${publicSlug(member.slug)}`}>{member.data.name}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<script>
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>('[data-team-filter]');
+  const teamSections = document.querySelectorAll<HTMLElement>('[data-team-category]');
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const filter = button.dataset.teamFilter;
+      filterButtons.forEach(item => item.classList.remove('active'));
+      button.classList.add('active');
+
+      teamSections.forEach(section => {
+        section.style.display =
+          filter === 'all' || section.dataset.teamCategory === filter ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+<style>
+.team-hero {
+  padding-block: var(--space-8) var(--space-10);
+  background: var(--color-bg-alt);
+}
+.team-hero-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+.hero-kicker {
+  display: block;
+  margin-bottom: var(--space-3);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.page-lead {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  max-width: 56ch;
+  margin-top: var(--space-4);
+}
+.team-stats {
+  border-bottom: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+.team-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.team-stat {
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  border-right: 1.5px solid var(--color-border);
+  text-align: center;
+}
+.team-stat:last-child { border-right: 0; }
+.team-stat strong {
+  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1;
+}
+.team-stat span {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.team-controls {
+  padding-block: var(--space-6);
+  border-bottom: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+.team-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.team-filter {
+  min-height: 36px;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  transition: all var(--transition-fast);
+}
+.team-filter:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.team-filter.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #fff;
+}
+.team-group { padding-block: var(--space-10); }
+.group-heading-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1.5px solid var(--color-border);
+}
+.group-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
+}
+.group-count,
+.rail-count {
+  min-width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-alt);
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+.rail-hint {
+  display: none;
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+.team-desktop-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+.team-rails--mobile-only { display: none; }
+.team-rail-block + .team-rail-block {
+  margin-top: var(--space-8);
+}
+.rail-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.rail-heading {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  letter-spacing: -0.01em;
+}
+.rail-count {
+  min-width: 28px;
+  height: 28px;
+  font-size: 0.75rem;
+}
+.team-rail-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+.team-rail-item { min-width: 0; }
+.team-rail-item :global(.team-card),
+.team-desktop-grid :global(.team-card) { height: 100%; }
+
+.alumni-section {
+  padding-block: var(--space-12);
+  background: var(--color-bg-alt);
+}
+.alumni-block { margin-top: var(--space-6); }
+.alumni-heading {
+  margin-bottom: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}
+.alumni-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-6);
+}
+.alumni-item a {
+  display: inline-block;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.alumni-item a:hover { color: var(--color-primary); }
+
+@media (max-width: 980px) {
+  .team-desktop-grid,
+  .team-rail-track,
+  .alumni-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .team-hero-inner { align-items: flex-start; flex-direction: column; }
+  .team-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .team-stat:nth-child(2) { border-right: 0; }
+  .team-stat:nth-child(-n+2) { border-bottom: 1.5px solid var(--color-border); }
+  .rail-hint { display: block; }
+  .team-desktop-grid { display: none; }
+  .team-rails--mobile-only { display: block; }
+  .team-rail {
+    margin-inline: calc(-1 * clamp(1rem, 5vw, 3rem));
+  }
+  .team-rail-track {
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: clamp(1rem, 5vw, 3rem);
+    padding-inline: clamp(1rem, 5vw, 3rem);
+    padding-bottom: var(--space-3);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .team-rail-item {
+    flex: 0 0 min(78vw, 300px);
+    scroll-snap-align: start;
+  }
+  .alumni-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .alumni-list { grid-template-columns: minmax(0, 1fr); }
+  .team-rail-item { flex-basis: min(82vw, 280px); }
+}
+</style>
