@@ -8,6 +8,7 @@ const ostr = () => z.string().optional();
 const settings = defineCollection({
   type: 'data',
   schema: z.object({
+    lang: z.enum(['en', 'pt', 'es']).default('en'),
     siteName: str(),
     siteTagline: str(),
     siteDescription: str(),
@@ -41,6 +42,7 @@ const settings = defineCollection({
 const pages = defineCollection({
   type: 'content',
   schema: z.object({
+    lang: z.enum(['en', 'pt', 'es']).default('en'),
     title:       z.string(),
     description: ostr(),
     lastUpdated: ostr(),
@@ -51,6 +53,7 @@ const pages = defineCollection({
 const team = defineCollection({
   type: 'content',
   schema: z.object({
+    lang: z.enum(['en', 'pt', 'es']).default('en'),
     name:          z.string(),
     title:         ostr(),
     role:          z.enum(['Principal Investigator', 'Postdoc', 'Visiting Scholar', 'PhD Student', 'Masters Student', 'Undergraduate', 'Staff']),
@@ -76,6 +79,7 @@ const team = defineCollection({
 const researchAreas = defineCollection({
   type: 'content',
   schema: z.object({
+    lang: z.enum(['en', 'pt', 'es']).default('en'),
     title:        z.string(),
     icon:         ostr(),
     summary:      z.string(),
@@ -90,6 +94,7 @@ const researchAreas = defineCollection({
 const projects = defineCollection({
   type: 'content',
   schema: z.object({
+    lang: z.enum(['en', 'pt', 'es']).default('en'),
     title:        z.string(),
     partner:      ostr(),
     funding:      ostr(),
@@ -112,6 +117,7 @@ const projects = defineCollection({
 const publications = defineCollection({
   type: 'content',
   schema: z.object({
+    lang: z.enum(['en', 'pt', 'es']).default('en'),
     title:        z.string(),
     authors:      z.array(z.string()).default([]),
     venue:        ostr(),
@@ -131,12 +137,19 @@ const publications = defineCollection({
 const collaborations = defineCollection({
   type: 'content',
   schema: z.object({
-    name:        z.string(),
+    lang: z.enum(['en', 'pt', 'es']).default('en'),
+    name:        z.string(), // short/official abbreviation when fullName is set
+    fullName:    ostr(), // expanded legal/official name; toggled in place via ▾
     type:        z.enum(['university', 'company', 'government', 'research-institute', 'ngo']),
     country:     str(),
     logo:        ostr(),
+    logoText:    ostr(), // text mark when no image logo exists, e.g. "CUCC"
+    logoBg:      ostr(), // CSS color matching opaque logo plate, e.g. "#0000FE"
     url:         ostr(),
     description: ostr(),
+    formerName:  ostr(), // deprecated: prefer absorbed[]
+    /** Public slugs of partners absorbed into this card (hidden from main grid). */
+    absorbed:    z.array(z.string()).default([]),
     featured:    z.boolean().default(false),
     order:       z.number().optional(),
   }),
